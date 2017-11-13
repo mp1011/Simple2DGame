@@ -7,51 +7,64 @@ using System.Threading.Tasks;
 
 namespace GameEngine
 {
-    public class BooleanTileMap 
+    public enum TileMaskValue
     {
-        public ArrayGrid<bool> TileFlags { get; private set; }
+        Empty,
+        Filled,
+        Obscured
+    }
+
+    public class TileMaskMap 
+    {
+        public ArrayGrid<TileMaskValue> TileFlags { get; private set; }
 
         public BorderTileSet TileSet { get; private set; }
-      
-        public BooleanTileMap(ArrayGrid<bool> tiles, BorderTileSet tileSet) 
+
+        public TileMaskMap(ArrayGrid<bool> tiles, BorderTileSet tileSet) 
         {
-            TileFlags = tiles;
+            TileFlags = new ArrayGrid<TileMaskValue>(tiles.Columns, tiles.Select(p => p ? TileMaskValue.Filled : TileMaskValue.Empty));
             TileFlags.ReplaceOutOfBoundsTilesWithAdjacent = true;
             TileSet = tileSet;
         }
 
-        public BooleanTileMap(int columns, int rows, BorderTileSet tileSet) 
+        public TileMaskMap(int columns, int rows, BorderTileSet tileSet) 
             : this(new ArrayGrid<bool>(new Vector2(columns,rows)), tileSet)
         {
         }
 
         public void Apply(TileMap map, bool applyEmptyCells=true)
         { 
-            TileFlags.Select((tile, index) =>
+            foreach(var tile in TileFlags.PointItems)
             {
-                if (tile)
+                if (tile.Value == TileMaskValue.Filled)
                 {
-                    var computedCell = TileSet.GetCell(GetNeighbors(index));
-                    map.Tiles.Cells.Set(index, computedCell);
+                    var computedCell = TileSet.GetCell(GetNeighbors(tile));
+                    map.Tiles.Cells.Set(tile.Position, computedCell);
                 }
-                else if(applyEmptyCells)
+                else if (applyEmptyCells)
                 {
-                    map.Tiles.Cells.Set(index, TileSet.GetCell(BorderSide.EmptySpace));
+                    map.Tiles.Cells.Set(tile.Position, TileSet.GetCell(BorderSide.EmptySpace));
                 }
-                  
-                return 0;
-            }).ToArray();
+
+            }
+
         }
 
-        private BorderSide GetNeighbors(int index)
+        private BorderSide GetNeighbors(ArrayGridPoint<TileMaskValue> tile)
         {
-            var pt = TileFlags.IndexToPoint(index);
+            bool hasLeft, hasAbove, hasBelow, hasRight;
+            bool hasUpperLeftCorner, hasUpperRightCorner, hasLowerLeftCorner, hasLowerRightCorner;
+            
+            hasLeft = tile.GetAdjacent(Direction.Left).Value  != TileMaskValue.Empty;
+            hasRight = tile.GetAdjacent(Direction.Right).Value != TileMaskValue.Empty;
+            hasAbove = tile.GetAdjacent(Direction.Up).Value != TileMaskValue.Empty;
+            hasBelow = tile.GetAdjacent(Direction.Down).Value != TileMaskValue.Empty;
 
-            bool hasLeft = TileFlags.GetFromPoint(pt.Translate(-1, 0));
-            bool hasAbove = TileFlags.GetFromPoint(pt.Translate(0, -1));
-            bool hasBelow = TileFlags.GetFromPoint(pt.Translate(0, 1));
-            bool hasRight = TileFlags.GetFromPoint(pt.Translate(1, 0));
-
+            hasUpperLeftCorner = tile.GetAdjacent(BorderSide.TopLeftCorner).Value != TileMaskValue.Empty;
+            hasUpperRightCorner = tile.GetAdjacent(BorderSide.TopRightCorner).Value != TileMaskValue.Empty;
+            hasLowerLeftCorner = tile.GetAdjacent(BorderSide.BottomLeftCorner).Value != TileMaskValue.Empty;
+            hasLowerRightCorner = tile.GetAdjacent(BorderSide.BottomRightCorner).Value != TileMaskValue.Empty;
+            
             var ret = BorderSide.None;
             if (hasLeft)
                 ret = ret | BorderSide.Left;
@@ -61,12 +74,7 @@ namespace GameEngine
                 ret = ret | BorderSide.Right;
             if (hasBelow)
                 ret = ret | BorderSide.Bottom;
-
-            bool hasUpperLeftCorner = TileFlags.GetFromPoint(pt.Translate(-1, -1));
-            bool hasUpperRightCorner = TileFlags.GetFromPoint(pt.Translate(1, -1));
-            bool hasLowerLeftCorner = TileFlags.GetFromPoint(pt.Translate(-1, 1));
-            bool hasLowerRightCorner = TileFlags.GetFromPoint(pt.Translate(1, 1));
-
+          
             if (hasUpperLeftCorner)
                 ret = ret | BorderSide.TopLeftCorner;
             if (hasUpperRightCorner)

@@ -13,6 +13,7 @@ namespace GameEngine
         private Dictionary<BorderSide, int> Cells = new Dictionary<BorderSide, int>();
       
         public TextureInfo Texture { get; private set; }
+        public bool TreatObscuredAsEmpty = false;
 
         public BorderTileSet(TextureInfo texture)
         {

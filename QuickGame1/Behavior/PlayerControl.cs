@@ -23,6 +23,7 @@ namespace QuickGame1
 
         private ICondition hasLandedOnGround;
         private ICondition isAttacking;
+        private float highestPointAboveGround = float.MaxValue;
 
         public PlayerControl(King player, IGameInputWithDPad input)
         {
@@ -88,10 +89,22 @@ namespace QuickGame1
                 brake.Active = true;
                 walk.Active = false;
             }
+
+            if(!Player.IsOnGround.Active)
+            {
+                highestPointAboveGround = (float)Math.Min(highestPointAboveGround, Player.Position.Bottom);
+            }
             
             if(hasLandedOnGround.WasJustActivated())
             {
-                AudioEngine.Instance.PlaySound(Sounds.HitGround);
+                float maxSoundDistance = 64;
+                var distanceFallen = ((float)Player.Position.Bottom - highestPointAboveGround).KeepInsideRange(0, maxSoundDistance);
+
+                var distanceFallenPct = distanceFallen / maxSoundDistance;
+                if (distanceFallen > 0.1)
+                    AudioEngine.Instance.PlaySound(Sounds.HitGround, distanceFallenPct);
+
+                highestPointAboveGround = Int32.MaxValue;
             }
 
             if(isAttacking.WasJustActivated())

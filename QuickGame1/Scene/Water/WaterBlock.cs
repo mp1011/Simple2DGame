@@ -31,13 +31,16 @@ namespace QuickGame1
             var mapSize = new Vector2((float)rec.Width / cs.X, (float)rec.Height / cs.Y);
             overlayTiles = new TileMap(layer, map.Tiles.Texture, mapSize);
             overlayTiles.Position.UpperLeft = rec.UpperLeft;
-
+            
             Vector2 tileOffset = new Vector2((float)rec.Left / cs.X, (float)rec.Top / cs.Y);
 
             foreach (var pt in overlayTiles.Tiles.Cells.Points)
             {
                 var baseTile = map.GetTileFromGridPoint(pt.Translate(tileOffset));
-                overlayTiles.Tiles.Cells.Set(pt, baseTile.TileID);
+                if(baseTile.IsSolid)
+                    overlayTiles.Tiles.Cells.Set(pt, baseTile.TileID);
+                else 
+                    overlayTiles.Tiles.Cells.Set(pt, map.EmptyCell);
             }
 
         }

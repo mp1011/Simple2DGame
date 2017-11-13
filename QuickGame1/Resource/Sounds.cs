@@ -24,7 +24,7 @@ namespace QuickGame1
         static Sounds()
         {
             GetCoin = new SoundEffect("GetCoin");
-            HitGround = new SoundEffect("HitGround");
+            HitGround = new SoundEffect("HitGround",0.4f,1);
             Swish = new SoundEffect("swish");
             EnemyDie = new SoundEffect("enemydie");
             PlayerHit = new SoundEffect("playerhit",0.1f,1);

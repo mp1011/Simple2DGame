@@ -298,16 +298,28 @@ namespace GameEngine
                 case BorderSide.Left: return vector.Translate(-1, 0);
                 case BorderSide.Right: return vector.Translate(1, 0);
                 case BorderSide.Bottom: return vector.Translate(0, 1);
+              
+                case BorderSide.TopLeftCorner: return vector.Translate(-1, -1);
+                case BorderSide.TopRightCorner: return vector.Translate(1, -1);
+                case BorderSide.BottomLeftCorner: return vector.Translate(-1, 1);
+                case BorderSide.BottomRightCorner: return vector.Translate(1, 1);
+
                 case BorderSide.None: return vector.Translate(0, 0);
+
                 default: throw new NotImplementedException();
             }
         }
 
-        public static Vector2[] GetAdjacentPoints(this Vector2 vector, params BorderSide[] sides)
+        public static Vector2[] GetAdjacentPoints(this Vector2 vector, bool includeDiagonal)
         {
-
-            if (sides.Length == 0)
-                sides = new BorderSide[] { BorderSide.Left, BorderSide.Top, BorderSide.Right, BorderSide.Bottom };
+            var sides = new List<BorderSide> { BorderSide.Left, BorderSide.Top, BorderSide.Right, BorderSide.Bottom };
+            if (includeDiagonal)
+            {
+                sides.Add(BorderSide.TopLeftCorner);
+                sides.Add(BorderSide.TopRightCorner);
+                sides.Add(BorderSide.BottomLeftCorner);
+                sides.Add(BorderSide.BottomRightCorner);
+            }
 
             return sides.Select(side => vector.GetAdjacent(side)).ToArray();
         }

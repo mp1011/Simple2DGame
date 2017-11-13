@@ -36,6 +36,7 @@ namespace QuickGame1
             pauseMenu.AddItem(new DynamicText<King>(scene.Player, p => "COINS: " + p.Coins, Fonts.BigFont, scene.InterfaceLayer));
 
             pauseMenu.Position.Center = Engine.GetScreenSize().Center;
+            pauseMenu.Visible = false;
         }
 
         void IUpdateable.Update(TimeSpan elapsedInFrame)

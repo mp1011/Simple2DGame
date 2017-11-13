@@ -31,7 +31,7 @@ namespace GameEngine
             Layers = LoadLayers().ToArray();
             BackgroundColor = new Color(20, 30, 20);
             Position = new Rectangle();
-            Position.Set(Engine.Instance.Renderer.ScreenBounds.Position);
+            Position.Set(Engine.GetScreenSize());
             LoadSceneContent();
 
             foreach (var displayable in Layers.SelectMany(p => p.FixedDisplayable))

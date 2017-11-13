@@ -39,7 +39,7 @@ namespace QuickGame1
     {
         public List<Rectangle> MapRegions = new List<Rectangle>();
         public ArrayGrid<ImageCellType> Cells;
-        public BooleanTileMap BrownRockMap, GrassMap, WaterMap, LadderMap;
+        public TileMaskMap BrownRockMap, GrassMap, WaterMap, LadderMap;
         private Vector2 CellSize;
 
         public MapTemplate(string mapfile, Vector2 cellSize)
@@ -99,10 +99,10 @@ namespace QuickGame1
 
         private void InitMaps()
         {
-            BrownRockMap = new BooleanTileMap(Cells.Map(p => p == ImageCellType.BrownRock || p == ImageCellType.MapBoundary), GameTiles.BrownRock());
-            GrassMap = new BooleanTileMap(Cells.Map(p => p == ImageCellType.GrassBackground), GameTiles.Grass());
-            WaterMap = new BooleanTileMap(Cells.Map(p => p == ImageCellType.Water), GameTiles.Water());
-            LadderMap = new BooleanTileMap(Cells.Map(p => p == ImageCellType.Ladder), GameTiles.Ladder());
+            BrownRockMap = new TileMaskMap(Cells.Map(p => p == ImageCellType.BrownRock), GameTiles.BrownRock());
+            GrassMap = new TileMaskMap(Cells.Map(p => p == ImageCellType.GrassBackground), GameTiles.Grass());
+            WaterMap = new TileMaskMap(Cells.Map(p => p == ImageCellType.Water), GameTiles.Water());
+            LadderMap = new TileMaskMap(Cells.Map(p => p == ImageCellType.Ladder), GameTiles.Ladder());
         }
 
         private static ImageCellType ColorToType(Color c)
@@ -173,7 +173,7 @@ namespace QuickGame1
         {
             var screen = Engine.Instance.Renderer.ScreenBounds.Position;
 
-            var minSize = new Vector2((float)screen.Width / CellSize.X, (float)screen.Height / CellSize.Y);
+            var minSize = new Vector2((float)(screen.Width / CellSize.X-1), (float)(screen.Height / CellSize.Y-1));
 
             foreach(var region in MapRegions)
             {
@@ -188,7 +188,9 @@ namespace QuickGame1
             var left = (int)Cells.GetPointsInLine(pointInMap, Direction.Left).First(p => p.Value == ImageCellType.MapBoundary).Position.X;
             var bottom = (int)Cells.GetPointsInLine(pointInMap, Direction.Down).First(p => p.Value == ImageCellType.MapBoundary).Position.Y;
             var right = (int)Cells.GetPointsInLine(pointInMap, Direction.Right).First(p => p.Value == ImageCellType.MapBoundary).Position.X;
-            return new Rectangle(Math.Max(0,left), Math.Max(0, top), right - left, bottom - top);
+            left++;
+            top++;
+            return new Rectangle(left,top, right - left, bottom - top);
         }
 
         public MapTemplate Extract(int regionIndex)

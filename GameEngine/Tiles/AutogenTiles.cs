@@ -25,7 +25,11 @@ namespace GameEngine
             bool anyChanged = true;
             int maxPasses = 50;
             int pass = 0;
+            var numberOfScreensInMap = map.NumberOfScreens;
 
+            foreach (var tile in AutoGenTiles)
+                tile.MaxMatches = tile.MaxMatchesPerScreen * numberOfScreensInMap;
+            
             while(anyChanged && pass < maxPasses)
             {
                 anyChanged = false;
@@ -81,6 +85,7 @@ namespace GameEngine
         public AutogenTiles TileSet { get; private set; }
 
         public int Consecutive = 1;
+        public int MaxMatchesPerScreen = int.MaxValue;
         public int MaxMatches = int.MaxValue;
         public int MaxPass = 10;
 

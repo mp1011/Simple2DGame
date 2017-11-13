@@ -12,7 +12,14 @@ namespace GameEngine
     {
         public ArrayGrid<T> Grid;
         public Vector2 Position;
+        public int Index => Grid.PointToIndex(Position,0);
+
         public T Value;
+
+        public override string ToString()
+        {
+            return $"{Position.X},{Position.Y}={Value}";
+        }
 
         public ArrayGridPoint(Vector2 position, ArrayGrid<T> grid)
         {
@@ -25,6 +32,20 @@ namespace GameEngine
         {
             var adj = Position.GetAdjacent(side);
             return new ArrayGridPoint<T>(adj, Grid);
+        }
+
+        public ArrayGridPoint<T> GetAdjacent(BorderSide side)
+        {
+            var adj = Position.GetAdjacent(side);
+            return new ArrayGridPoint<T>(adj, Grid);
+        }
+
+        public IEnumerable<ArrayGridPoint<T>> GetAdjacent()
+        {
+            yield return GetAdjacent(Direction.Left);
+            yield return GetAdjacent(Direction.Right);
+            yield return GetAdjacent(Direction.Up);
+            yield return GetAdjacent(Direction.Down);
         }
 
         public void Set(T value)

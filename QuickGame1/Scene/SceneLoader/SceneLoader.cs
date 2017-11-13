@@ -33,6 +33,7 @@ namespace QuickGame1
             {
                 ret.Player.Position.Center = CalculatePlayerStart(LastScene.Player, ret);
                 ret.Player.Position.KeepWithin(ret.Position, 32);
+                ret.Player.PutOnGround(ret.TileMap);
             }
 
             LastScene = ret;

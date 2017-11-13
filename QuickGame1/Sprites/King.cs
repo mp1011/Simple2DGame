@@ -51,9 +51,7 @@ namespace QuickGame1
             Animations.Add(AnimationKeys.ClimbStop, this, TextureFlipBehavior.FlipWhenFacingLeft, 18);
            
             new MovingPlatformPositionAdjuster<King>(this);
-            WaterHelper.AddWaterPhysics(this);
-
-                      
+            WaterHelper.AddWaterPhysics(this);           
         }
     }
 

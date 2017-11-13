@@ -131,15 +131,6 @@ namespace QuickGame1
 
             var tileSet = new AutogenTiles(texture);
 
-            //green ground
-            //brown rock
-            //blue rock
-            //ground
-            //grass
-            //flowers
-            //light fence
-            //dark fence
-
             var grassGroundTiles = new AutogenTile(tileSet);
             grassGroundTiles.AddTileChoice(0, 0);
             grassGroundTiles.AddTileChoice(1, 0);
@@ -164,7 +155,7 @@ namespace QuickGame1
 
             var brownRockGrassTop = new AutogenTile(tileSet, 1, 0);
             brownRockGrassTop.Conditions.Add(BorderSide.None, new AutogenTile(tileSet, 4, 0));
-            brownRockGrassTop.MaxMatches = 10;
+            brownRockGrassTop.MaxMatchesPerScreen = 4;
             brownRockGrassTop.MaxPass = 0;
 
             var brownRockGrassTopLeft = new AutogenTile(tileSet, 1, 1);
@@ -189,7 +180,7 @@ namespace QuickGame1
             grass.Conditions.Add(BorderSide.None, AutogenTile.Empty);
 
             var flowers = new AutogenTile(tileSet);
-            flowers.MaxMatches = 4;
+            flowers.MaxMatchesPerScreen = 4;
             flowers.MaxPass = 2;
             flowers.AddTileChoice(7, 5);
             flowers.AddTileChoice(8, 5);
@@ -201,7 +192,7 @@ namespace QuickGame1
             stones.AddTileChoice(9, 5);
             stones.AddTileChoice(9, 6);
 
-            stones.MaxMatches = 8;
+            stones.MaxMatchesPerScreen = 3;
             stones.Conditions.Add(BorderSide.Bottom, brownRockTiles);
             stones.Conditions.Add(BorderSide.None, AutogenTile.Empty);
 

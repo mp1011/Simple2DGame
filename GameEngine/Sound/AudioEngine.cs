@@ -18,7 +18,7 @@ namespace GameEngine
             Instance = this;
         }
 
-        public abstract void PlaySound(SoundEffect sound);
+        public abstract void PlaySound(SoundEffect sound, float percentVolume=1.0f);
 
         public abstract void LoadSound(SoundID sound);
     }
@@ -35,12 +35,12 @@ namespace GameEngine
             soundLoader = new XNAContentLoader<SoundID, XNASoundEffect>(contentManager,"Sounds");
         }
 
-        public override void PlaySound(SoundEffect sound)
+        public override void PlaySound(SoundEffect sound, float percentVolume = 1.0f)
         {
             var instance = GetNextFreeInstance(sound.ID, sound.MaxSoundsAtOnce);
             if (instance != null)
             {
-                instance.Volume = sound.Volume;
+                instance.Volume = sound.Volume * percentVolume;
                 instance.Play();
             }
         }

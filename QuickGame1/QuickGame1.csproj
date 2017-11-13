@@ -101,7 +101,7 @@
     <Compile Include="Resource\Input.cs" />
     <Compile Include="Resource\Sounds.cs" />
     <Compile Include="Resource\Textures.cs" />
-    <Compile Include="Scene\CustomTiles.cs" />
+    <Compile Include="Scene\SceneLoader\CustomTiles.cs" />
     <Compile Include="Scene\Interface.cs" />
     <Compile Include="Scene\SceneLoader\MapFromImage.cs" />
     <Compile Include="Scene\QuickGameScene.cs" />

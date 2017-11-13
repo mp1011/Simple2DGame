@@ -74,12 +74,22 @@ namespace GameEngine
         {
             get
             {
-                if(_position == null)
+                if (_position == null)
                 {
                     var totalSize = Tiles.Texture.CellSize.Scale(Tiles.Cells.Size);
                     _position = new Rectangle(0, 0, totalSize.X, totalSize.Y);
                 }
                 return _position;
+            }
+        }
+
+        public int NumberOfScreens
+        {
+            get
+            {
+                var screensX = (int)Math.Ceiling(Position.Width / Engine.GetScreenSize().Width);
+                var screensY = (int)Math.Ceiling(Position.Height / Engine.GetScreenSize().Height);
+                return screensX * screensY;
             }
         }
 

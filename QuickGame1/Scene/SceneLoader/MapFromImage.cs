@@ -16,8 +16,10 @@ namespace QuickGame1
 
             var template = masterMap.Extract(scene.ID.MapNumber);
             
-            FillMissingBackgroundTiles(template.Cells, template.GrassMap, BorderSide.Left, BorderSide.Right, BorderSide.Top, BorderSide.Bottom);
-            FillMissingBackgroundTiles(template.Cells, template.WaterMap, BorderSide.Left, BorderSide.Right, BorderSide.Top, BorderSide.Bottom);
+            CalculateObscuredTiles(template.Cells, template.GrassMap);
+            CalculateObscuredTiles(template.Cells, template.WaterMap);
+            ExtendTileMask(template.GrassMap);
+            ExtendTileMask(template.WaterMap);
 
             var solidTiles = new QuickGameTileMap(scene.SolidLayer, template.BrownRockMap.TileSet.Texture, template.Cells.Size);
             solidTiles.EmptyCell = template.BrownRockMap.TileSet.GetCell(BorderSide.EmptySpace);
@@ -29,34 +31,10 @@ namespace QuickGame1
             template.GrassMap.Apply(grassTiles);
 
             var waterTiles = new QuickGameTileMap(scene.WaterLayer, template.BrownRockMap.TileSet.Texture, template.Cells.Size);
-            waterTiles.EmptyCell = solidTiles.EmptyCell;
-
+            waterTiles.EmptyCell = solidTiles.EmptyCell;            
             template.WaterMap.Apply(waterTiles, true);
 
-            List<Vector2> ignore = new List<Vector2>();
-
-            foreach (var pt in waterTiles.Tiles.Cells.Points)
-            {
-              
-                var tile = waterTiles.GetTileFromGridPoint(pt);
-                var leftAdjacent = tile.GetAdjacent(BorderSide.Left);
-                var rightAdjacent = tile.GetAdjacent(BorderSide.Right);
-
-                if (!ignore.Contains(pt) && !ignore.Contains(leftAdjacent.TileIndex) && !ignore.Contains(rightAdjacent.TileIndex))
-                {
-                    if (tile.IsEmpty && (!leftAdjacent.IsEmpty || !rightAdjacent.IsEmpty))
-                    {
-                        if (!leftAdjacent.IsEmpty)
-                            waterTiles.Tiles.Cells.Set(pt, leftAdjacent.TileID);
-                        else
-                            waterTiles.Tiles.Cells.Set(pt, rightAdjacent.TileID);
-
-                        ignore.Add(pt);
-                        ignore.Add(leftAdjacent.TileIndex);
-                        ignore.Add(rightAdjacent.TileIndex);
-                    }
-                }
-            }
+            FixWaterSurfaceTiles(waterTiles, template.WaterMap.TileSet);
 
             scene.WaterLayer.FixedDisplayable = new IDisplayable[] { waterTiles };
             scene.SolidLayer.FixedDisplayable = new IDisplayable[] { grassTiles, solidTiles  };
@@ -107,29 +85,72 @@ namespace QuickGame1
             return solidTiles;
         }
 
+        private static void FixWaterSurfaceTiles(QuickGameTileMap tileMap, BorderTileSet tileSet)
+        {
+            int surfaceTile = tileSet.GetCell(BorderSide.Left | BorderSide.Right | BorderSide.Bottom);
+            List<ArrayGridPoint<int>> tilesToChange = new List<ArrayGridPoint<int>>();
+
+            foreach(var tile in tileMap.Tiles.Cells.PointItems)
+            {
+                if(tile.Value == surfaceTile)
+                {
+                    var left = tile.GetAdjacent(Direction.Left);
+                    if (left.Value != surfaceTile)
+                        tilesToChange.Add(left);
+
+                    var right = tile.GetAdjacent(Direction.Right);
+                    if (right.Value != surfaceTile)
+                        tilesToChange.Add(right);
+                }
+            }
+
+            foreach(var tile in tilesToChange)
+            {
+                tile.Set(surfaceTile);
+            }
+        }
+
         /// <summary>
         /// Fills in background tiles for any non-empty cell that is adjacent to a background tile. Returns true if any changes were made.
         /// </summary>
         /// <param name="mapGrid"></param>
         /// <param name="grassMap"></param>
         /// <returns></returns>
-        public static void FillMissingBackgroundTiles(ArrayGrid<ImageCellType> mapGrid, BooleanTileMap bgMap, params BorderSide[] sidesToCheck)
+        public static void CalculateObscuredTiles(ArrayGrid<ImageCellType> mapGrid, TileMaskMap bgMap)
         {
             List<Vector2> tilesToAdd = new List<Vector2>();
+            List<Vector2> tilesToRecheck = new List<Vector2>();
+             
+            foreach(var tile in mapGrid.PointItems)
+            {
+                if (bgMap.TileFlags.GetFromPoint(tile.Position) == TileMaskValue.Filled)
+                    continue;
 
-            foreach(var point in mapGrid.Points)
-            {              
-                var thisCell = mapGrid.GetFromPoint(point);
+                if (tile.Value == ImageCellType.Empty)
+                    continue;
 
-                if (bgMap.TileFlags.GetFromPoint(point) == false && thisCell != ImageCellType.Empty)
-                {
-                    if(point.GetAdjacentPoints(sidesToCheck).Select(bgMap.TileFlags.GetFromPoint).Where(p=>p).Any())
-                        tilesToAdd.Add(point);
-                }
+                if (tile.Value.IsSolid())
+                    bgMap.TileFlags.Set(tile.Position, TileMaskValue.Obscured);
+                else if (tile.Position.GetAdjacentPoints(true).Select(bgMap.TileFlags.GetFromPoint).Where(p => p == TileMaskValue.Filled).Any())
+                    bgMap.TileFlags.Set(tile.Position, TileMaskValue.Filled);               
+            }
+        }
+
+        /// <summary>
+        /// Extends tiles one unit into the obscured tiles, for smoother boundaries
+        /// </summary>
+        /// <param name="waterTiles"></param>
+        public static void ExtendTileMask(TileMaskMap tiles)
+        {
+            List<ArrayGridPoint<TileMaskValue>> itemsToSet = new List<ArrayGridPoint<TileMaskValue>>();
+
+            foreach(var tile in tiles.TileFlags.PointItems.Where(p=>p.Value == TileMaskValue.Filled))
+            {
+                itemsToSet.AddRange(tile.GetAdjacent().Where(p => p.Value == TileMaskValue.Obscured));
             }
 
-            foreach(var pt in tilesToAdd)
-                bgMap.TileFlags.Set(pt, true);
+            foreach (var item in itemsToSet)
+                item.Set(TileMaskValue.Filled);
         }
         
 
