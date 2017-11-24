@@ -12,9 +12,11 @@ namespace QuickGame1
 {
     enum CellType
     {
-        Empty,
+        Empty=0,
         Coin,
-        Snake
+        Snake,
+        Grapeman,
+        Slime
     }
       
     interface IEditorPlaceable : IWithPosition, IRemoveable
@@ -56,12 +58,24 @@ namespace QuickGame1
             }
         }
         
-        private void CreateObject(CellType type, ObjectStartInfo startInfo)
+        public IEditorPlaceable CreateObject(CellType type, ObjectStartInfo startInfo)
         {
-            if(type == CellType.Coin)
-            {
-                new Coin().Position.Center = new Vector2(startInfo.X, startInfo.Y);
-            }
+            IEditorPlaceable newItem;
+
+            if (type == CellType.Coin)
+                newItem = new Coin();
+            else if (type == CellType.Snake)
+                newItem = new Snake();
+            else if (type == CellType.Grapeman)
+                newItem = new Grapeman();
+            else if (type == CellType.Slime)
+                newItem = new Slime();
+            else
+                throw new NotImplementedException();
+
+            newItem.Position.Center = new Vector2(startInfo.X, startInfo.Y);
+
+            return newItem;
         }
 
         public void SaveToDisk(QuickGameScene scene)
@@ -78,7 +92,7 @@ namespace QuickGame1
         private Stream GetFileStream(SceneID sceneID)
         {
             //todo, use resource 
-            var path = @"C:\Users\Miko\Documents\GitHub\SomeGame\QuickGame1\Content\Maps\" + sceneID.ToString() + ".map";
+            var path = @"C:\Users\Miko\Documents\GitHub\Simple2DGame\QuickGame1\Content\Maps\" + sceneID.ToString() + ".map";
             return File.Open(path, FileMode.OpenOrCreate);
         }
     }

@@ -82,5 +82,11 @@ namespace GameEngine
 
         }
 
+        //todo - perhaps we need a camera class
+        public void AdjustCamera()
+        {
+            Engine.Instance.Renderer.ScreenBounds.Position.Center = CameraCenter.Position.Center;
+            Engine.Instance.Renderer.ScreenBounds.Position.KeepWithin(Position);
+        }
     }
 }

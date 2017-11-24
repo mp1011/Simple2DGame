@@ -28,7 +28,10 @@ namespace GameEngine
             var numberOfScreensInMap = map.NumberOfScreens;
 
             foreach (var tile in AutoGenTiles)
-                tile.MaxMatches = tile.MaxMatchesPerScreen * numberOfScreensInMap;
+            {
+                if(tile.MaxMatchesPerScreen < Int32.MaxValue)
+                    tile.MaxMatches = tile.MaxMatchesPerScreen * numberOfScreensInMap;
+            }
             
             while(anyChanged && pass < maxPasses)
             {

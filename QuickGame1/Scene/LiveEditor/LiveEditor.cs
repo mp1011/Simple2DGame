@@ -1,32 +1,12 @@
 ﻿using GameEngine;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using XColor = Microsoft.Xna.Framework.Color;
+
 
 namespace QuickGame1
 {
-    class EditorCursor : IDynamicDisplayable
-    {
-        private Layer Layer;
-        IRemoveable IDynamicDisplayable.Root => Layer;
-
-        private TextureDrawInfo drawInfo = new TextureDrawInfo { Opacity = 0.5f };
-        TextureDrawInfo IDisplayable.DrawInfo => drawInfo;
-
-        public Rectangle Position { get; } = new Rectangle(0, 0, 16, 16);
-
-        public EditorCursor(QuickGameScene scene)
-        {
-            scene.InterfaceLayer.AddObject(this);
-            Layer = scene.InterfaceLayer;
-        }
-
-        void IDisplayable.Draw(IRenderer painter)
-        {
-            painter.DrawRectangle(this, XColor.White);
-        }
-    }
-
+    
     class LiveEditor : IUpdateable
     {
         public EditorItem ClipboardItem;
@@ -39,14 +19,15 @@ namespace QuickGame1
         public EditorMenu Menu { get; private set; }
         public ItemSelector ItemSelector { get; private set; }
 
+        public bool Frozen { get; set; }
+
         UpdatePriority IUpdateable.Priority => UpdatePriority.BeginUpdate;
 
         IRemoveable IUpdateable.Root => Scene.InterfaceLayer;
 
         void IUpdateable.Update(TimeSpan elapsedInFrame)
         {
-            Cursor.Position.Center = MouseInput.MousePosition.SnapTo(16f);
-            Cursor.Position.KeepWithin(Engine.GetScreenSize());
+            Cursor.UpdateCursor(MouseInput.MousePosition, elapsedInFrame);
 
             if (MouseInput.GetButtonPressed(GameKeys.PlaceObject))
             {
@@ -61,6 +42,8 @@ namespace QuickGame1
                     {
                         var newItem = ClipboardItem.CreateItem();
                         newItem.Position.Center = Cursor.Position.Center;
+                        if (Frozen)
+                            FrozenObject.Create(newItem, Scene);
                     }
                 }
             }
@@ -69,7 +52,7 @@ namespace QuickGame1
                 var obj = GetObjectUnderCursor();
                 if (obj != null)
                 {
-                    ClipboardItem = EditorItem.FromObject(obj);
+                    ClipboardItem = new EditorItem { ItemType = obj.EditorType, Editor = this };
                 }
             }
 
@@ -99,6 +82,34 @@ namespace QuickGame1
 
             Menu = new EditorMenu(scene,this);
             ItemSelector = new ItemSelector(scene, this);
+        }
+
+        public IEnumerable<FrozenObject> FreezeScene(QuickGameScene scene)
+        {
+            if (!Frozen || scene != Scene)
+            {
+                var mapObjects = scene.SolidLayer.CollidableObjects.OfType<IEditorPlaceable>().ToArray();
+                foreach (var mo in mapObjects)
+                {
+                    yield return FrozenObject.Create(mo, Scene);
+                }
+
+                Frozen = true;
+            }
+        }
+
+        public void UnfreezeScene(QuickGameScene scene)
+        {
+            if (!Frozen)
+                return;
+
+            var mapObjects = Scene.SolidLayer.CollidableObjects.OfType<FrozenObject>().ToArray();
+            foreach (var frozenObject in mapObjects)
+            {
+                frozenObject.Unfreeze();
+            }
+
+            Frozen = false;
         }
 
       

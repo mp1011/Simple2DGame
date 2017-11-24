@@ -122,7 +122,10 @@ namespace GameEngine
             }
 
             if (Input.GetButtonPressed(SelectKey))
+            {
                 SelectedItem.OnItemChosen();
+                Options[SelectedOption].Selected = true;
+            }
         }
 
     }
@@ -152,7 +155,7 @@ namespace GameEngine
             set
             {
                 _selected = value;
-                Text.Message = (_selected ? Menu.SelectedCharacter : " ") + Text.Message.Substring(1);
+                Text.Message = (_selected ? Menu.SelectedCharacter : " ") + Item.ToString();
             }
         }
 

@@ -37,6 +37,64 @@ namespace QuickGame1
         }
     }
 
+    class ReloadOption : EditorOption
+    {
+        public override string ToString()
+        {
+            return "RELOAD";
+        }
+
+        private QuickGameScene Scene;
+
+        public ReloadOption(QuickGameScene scene)
+        {
+            Scene = scene;
+        }
+
+        protected override void OnOptionSelected(LiveEditor editor)
+        {
+            var playerPos = Scene.Player.Position.Center;
+
+            foreach (var objectInThisScene in Scene.SolidLayer.CollidableObjects.OfType<IEditorPlaceable>())
+                objectInThisScene.Remove();
+
+            var reloadedScene = Engine.Instance.SceneLoader.LoadScene(Scene.ID, forceReload: true) as QuickGameScene;
+            var newObjects = editor.FreezeScene(reloadedScene).ToArray();
+            Engine.Instance.Scene = Scene;
+            Scene.SolidLayer.CollidableObjects.AddRange(newObjects);
+            Editor.FreezeScene(Scene);
+
+            editor.Menu.Visible = false;
+        }
+    }
+
+    class FreezeItemsOption : EditorOption
+    {
+        private QuickGameScene Scene;
+
+        public FreezeItemsOption(QuickGameScene scene)
+        {
+            Scene = scene;
+        }
+        public override string ToString()
+        {
+            if (Editor.Frozen)
+                return "UNFREEZE";
+            else
+                return "FREEZE";
+        }
+
+        protected override void OnOptionSelected(LiveEditor editor)
+        {
+            if (editor.Frozen)
+                editor.UnfreezeScene(Scene);
+            else
+                editor.FreezeScene(Scene);
+          
+            editor.Menu.Visible = false;
+        }
+    }
+
     class ItemsOption : EditorOption
     {
         public override string ToString()
@@ -66,63 +124,49 @@ namespace QuickGame1
 
     class EditorMenu : Menu<EditorOption>
     {
-        public EditorMenu(QuickGameScene Scene, LiveEditor editor) : base(Scene.InterfaceLayer, Fonts.SmallFont, GameTiles.Border(), Input.GetInput(Scene), GameKeys.Attack)
+        public EditorMenu(QuickGameScene Scene, LiveEditor editor) : base(Scene.InterfaceLayer, Fonts.SmallFont, GameTiles.Border(), Input.GetInput(Scene), GameKeys.MenuOK)
         {
             AddOption(new ItemsOption() { Editor = editor });
+            AddOption(new FreezeItemsOption(Scene) { Editor = editor });
+            AddOption(new ReloadOption(Scene) { Editor = editor });
             AddOption(new SaveLevelOption() { Editor = editor });
             AddOption(new CancelOption() { Editor = editor });
         }
     }
 
-    abstract class EditorItem : IMenuItem
+    class EditorItem : IMenuItem
     {
+        public override string ToString()
+        {
+            return ItemType.ToString().ToUpper();
+        }
+
         public LiveEditor Editor;
-
-        protected abstract void OnItemChosen(LiveEditor editor);
-
+        public CellType ItemType;
+        
         void IMenuItem.OnItemChosen()
         {
-            OnItemChosen(Editor);
+            Editor.ClipboardItem = this;
+            Editor.ItemSelector.Visible = false;
         }
 
         void IMenuItem.OnSelection()
         {
-        }
+        }      
 
-        public abstract IEditorPlaceable CreateItem();
-
-        public static EditorItem FromObject(IEditorPlaceable obj)
+        public IEditorPlaceable CreateItem()
         {
-            return Activator.CreateInstance(typeof(EditorItem<>).MakeGenericType(obj.GetType())) as EditorItem;
+            return new MapSaver().CreateObject(ItemType, new ObjectStartInfo());
         }
     }
-
-    class EditorItem<T> : EditorItem
-        where T : IEditorPlaceable
-    {
-        public override string ToString()
-        {
-            return typeof(T).Name.ToUpper();
-        }
-
-        protected override void OnItemChosen(LiveEditor editor)
-        {
-            editor.ClipboardItem = this;
-            editor.ItemSelector.Visible = false;
-        }
-
-        public override IEditorPlaceable CreateItem()
-        {
-            return Activator.CreateInstance<T>();
-        }
-    }
+    
 
     class ItemSelector : Menu<EditorItem>
     {
-        public ItemSelector(QuickGameScene Scene, LiveEditor editor) : base(Scene.InterfaceLayer, Fonts.SmallFont, GameTiles.Border(), Input.GetInput(Scene), GameKeys.Attack)
+        public ItemSelector(QuickGameScene Scene, LiveEditor editor) : base(Scene.InterfaceLayer, Fonts.SmallFont, GameTiles.Border(), Input.GetInput(Scene), GameKeys.MenuOK)
         {
-            AddOption(new EditorItem<Coin>() { Editor = editor } );
-            AddOption(new EditorItem<Snake>() { Editor = editor });
+            foreach(var cellType in EnumHelper.GetValues<CellType>().Where(p=>p!=CellType.Empty))
+                AddOption(new EditorItem() { ItemType = cellType, Editor = editor} );
 
         }
     }

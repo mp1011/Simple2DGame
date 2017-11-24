@@ -12,7 +12,7 @@ namespace QuickGame1
     {
         public MapTemplate MasterTemplate { get; private set; }
 
-        public static QuickGameScene Current { get; private set; }
+        public static QuickGameScene Current { get; set; }
 
         public Layer ParallaxLayer {  get { return Layers[0]; } }   
         public Layer Background1 { get { return Layers[1]; } }

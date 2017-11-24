@@ -13,19 +13,13 @@ namespace GameEngine
         protected Scene Scene { get; private set; }
 
         protected SceneID CurrentMap => Scene.ID;
-
-        private SceneID nextMap;
+        
         public override SceneID NextMap
         {
             get
             {
-                if(nextMap == null)
-                {
-                    var exitSide = Scene.Boundary.GetExitingSide(Player.Position);
-                    nextMap = GetNextMap(exitSide, Player);
-                }
-
-                return nextMap;
+                var exitSide = Scene.Boundary.GetExitingSide(Player.Position);
+                return GetNextMap(exitSide, Player);               
             }
         }
 

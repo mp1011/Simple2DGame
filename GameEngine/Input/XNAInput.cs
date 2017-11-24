@@ -86,7 +86,9 @@ namespace GameEngine
     {
         public Vector2 MousePosition { get; private set; } = Vector2.Zero;
 
-        public XNAMouseInputDevice(InputMap<MouseButton> inputMap, Scene scene) : base(inputMap, scene) { }
+        public XNAMouseInputDevice(InputMap<MouseButton> inputMap, Scene scene) : base(inputMap, scene)
+        {
+        }
 
         private MouseState currentState;
         private MouseState lastState;
@@ -95,7 +97,13 @@ namespace GameEngine
         {
             lastState = currentState;
             currentState = Mouse.GetState();
-            MousePosition = currentState.Position.ToVector2();
+
+            var screenPosition = currentState.Position.ToVector2();
+
+            var window = Engine.Instance.WindowPosition;
+            var scene = Engine.Instance.Renderer.ScreenBounds.Position;
+            var scale = new Vector2((float)scene.Width / (float)window.Width, (float)scene.Height / (float)window.Height);
+            MousePosition = screenPosition.Scale(scale);
         }
 
         protected override object GetPressedButton()

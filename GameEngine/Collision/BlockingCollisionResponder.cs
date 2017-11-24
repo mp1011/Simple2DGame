@@ -18,20 +18,30 @@ namespace GameEngine
         where TFirst : IMovingWorldObject
         where TSecond : ICollidable
     {
+
+     
         void ICollisionResponder<TFirst, TSecond>.RespondToCollision(TFirst moveableObject, TSecond collidable, CollisionInfo collisionInfo)
         {
-            var originalSpeed = moveableObject.Motion.MotionPerSecond;
-            var originalPosition = moveableObject.Position.Center;
+            var movingCollidable = collidable as IMovingCollidable;
 
             var tryPosition = new Rectangle();
-            
-            tryPosition.Set(moveableObject.Position);
-            tryPosition.SetLeft(moveableObject.Motion.FrameStartPosition.Left);
-            bool collideX = !collidable.DetectCollision(tryPosition,true);
+            bool collideX, collideY;
 
             tryPosition.Set(moveableObject.Position);
+            tryPosition.SetLeft(moveableObject.Motion.FrameStartPosition.Left);
+
+            if(movingCollidable != null)
+                collideX = !movingCollidable.DetectFrameStartCollision(tryPosition);
+            else
+                collideX = !collidable.DetectCollision(tryPosition, true);
+          
+            tryPosition.Set(moveableObject.Position);
             tryPosition.SetTop(moveableObject.Motion.FrameStartPosition.Top);
-            bool collideY = !collidable.DetectCollision(tryPosition,true);
+
+            if(movingCollidable != null)
+                collideY = !movingCollidable.DetectFrameStartCollision(tryPosition);
+            else
+                collideY = !collidable.DetectCollision(tryPosition, true);
 
             tryPosition.Set(moveableObject.Position);
 
@@ -58,6 +68,9 @@ namespace GameEngine
 
             BeforePositionCorrected(moveableObject, collidable, collisionInfo, tryPosition);
 
+            if (tryPosition.Center.Y < moveableObject.Position.Center.Y - 18)
+                GlobalDebugHelper.NoOp();
+
             moveableObject.Position.Set(tryPosition);            
         }
         
@@ -82,7 +95,10 @@ namespace GameEngine
                 newY = newY.Approach(moveableObject.Motion.FrameStartPosition.Center.Y, 1);
 
                 deltaX = (newX - moveableObject.Motion.FrameStartPosition.Center.X).Unit();
-                deltaY = (newX - moveableObject.Motion.FrameStartPosition.Center.Y).Unit();
+                deltaY = (newY - moveableObject.Motion.FrameStartPosition.Center.Y).Unit();
+
+                if (deltaX == 0 && deltaY == 0)
+                    deltaY = -1;
             }
             while (collidable.DetectCollision(tryPosition,true))
             {

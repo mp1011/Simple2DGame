@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace QuickGame1
 {
-    class Grapeman : MovingActor, IPlatformerObject, IDamageable, IDamager
+    class Grapeman : MovingActor, IPlatformerObject, IDamageable, IDamager, IEditorPlaceable
     {
         public bool RecoilsWhenHit { get; set; }
         public ManualCondition IsUnderWater { get; set; } = new ManualCondition();
@@ -17,6 +17,8 @@ namespace QuickGame1
         DamageType IDamageable.TakesDamageFrom => DamageType.PlayerAttack | DamageType.Trap;
 
         DamageType IDamager.DamageType => DamageType.Enemy;
+
+        CellType IEditorPlaceable.EditorType => CellType.Grapeman;
 
         public Grapeman() : base(QuickGameScene.Current, Textures.GrapemanTexture)
         {

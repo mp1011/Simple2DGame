@@ -21,17 +21,14 @@ namespace GameEngine
         public UpdatePriority Priority { get { return UpdatePriority.Behavior; } }
 
         public TextureDrawInfo DrawInfo { get; private set; }
-        public IWithPositionAndDirection Parent { get; private set; }
-     
+      
         private Sprite Sprite;
-
+        private IWithPosition Parent;
         public ConfigValue<TimeSpan> TimePerFrame { get; private set; }
         private int[] Frames;
         private CyclingInteger CurrentFrameIndex;
         private TimeSpan TimeRemainingInFrame;
-        
-        public TextureFlipBehavior FlipBehavior { get; private set; }
-
+              
         public IRemoveable Root { get; private set; }
 
         public bool Finished {  get { return CurrentFrameIndex.JustCycled; } }
@@ -41,14 +38,13 @@ namespace GameEngine
             CurrentFrameIndex.Reset();
         }
 
-        public Animation(IRemoveable root, IWithPositionAndDirection parent, Sprite sprite, TextureFlipBehavior flipbehavior, params int[] frames)
+        public Animation(IRemoveable root, IWithPosition parent, Sprite sprite, params int[] frames)
         {
             Root = root;
             Parent = parent;
             TimePerFrame = new ConfigValue<TimeSpan>("animation frame");
             Sprite = sprite;
             Frames = frames;
-            FlipBehavior = flipbehavior;
             CurrentFrameIndex = new CyclingInteger(frames.Length);
             DrawInfo = sprite.DrawInfo;
         }
@@ -79,15 +75,43 @@ namespace GameEngine
             this.Sprite.Cell = this.CurrentFrame;
         }
 
+        protected virtual int BeforeDraw(IRenderer painter, Sprite sprite, TextureDrawInfo drawInfo)
+        {
+            return Sprite.Cell;
+        }
+
         public void Draw(IRenderer painter)
         {
-            int cell = this.Sprite.Cell;
+            DrawInfo.FlipOffsetsOnly = false;
+            DrawInfo.FlipX = false;
+            DrawInfo.FlipY = false;
+
+            int cell = BeforeDraw(painter, Sprite, DrawInfo);
+            painter.DrawSprite(this, this.Sprite.Texture, cell);           
+        }
+    }
+
+    public class DirectedAnimation : Animation
+    {
+        private IWithPositionAndDirection Parent;
+        private TextureFlipBehavior FlipBehavior;
+
+        public DirectedAnimation(IRemoveable root, IWithPositionAndDirection parent, Sprite sprite, TextureFlipBehavior flipbehavior, params int[] frames)
+            :base(root,parent,sprite,frames)
+        {
+            Parent = parent;            
+            FlipBehavior = flipbehavior;
+        }
+
+        protected override int BeforeDraw(IRenderer painter, Sprite sprite, TextureDrawInfo drawInfo)
+        {
+            int cell = sprite.Cell;
 
             DrawInfo.FlipOffsetsOnly = false;
             DrawInfo.FlipX = false;
             DrawInfo.FlipY = false;
 
-            switch(FlipBehavior)
+            switch (FlipBehavior)
             {
                 case TextureFlipBehavior.FlipWhenFacingLeft:
                     DrawInfo.FlipX = (Parent.Direction == Direction.Left);
@@ -98,7 +122,7 @@ namespace GameEngine
                 case TextureFlipBehavior.NextRowWhenFacingLeft:
                     if (Parent.Direction == Direction.Left)
                     {
-                        cell += Sprite.Texture.Columns;
+                        cell += sprite.Texture.Columns;
                         DrawInfo.FlipX = true;
                         DrawInfo.FlipOffsetsOnly = true;
                     }
@@ -106,16 +130,17 @@ namespace GameEngine
                 case TextureFlipBehavior.NextRowWhenRacingRight:
                     if (Parent.Direction == Direction.Right)
                     {
-                        cell += Sprite.Texture.Columns;
+                        cell += sprite.Texture.Columns;
                         DrawInfo.FlipX = true;
                         DrawInfo.FlipOffsetsOnly = true;
                     }
                     break;
             }
-            
-            painter.DrawSprite(this, this.Sprite.Texture, cell);
-           
+
+
+            return cell;
         }
+
     }
 
     public struct AnimationKey
@@ -167,7 +192,7 @@ namespace GameEngine
         public Animation Add<T>(AnimationKey key, T gameObject, TextureFlipBehavior flipBehavior, params int[] frames)
             where T:IRemoveable, IWithPositionAndDirection, IWithSprite
         {
-            var anim = new Animation(gameObject, gameObject, gameObject.Sprite, flipBehavior, frames);
+            var anim = new DirectedAnimation(gameObject, gameObject, gameObject.Sprite, flipBehavior, frames);
             Add(key.Name, anim);
             return anim;
         }

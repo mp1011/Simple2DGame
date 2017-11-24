@@ -61,5 +61,15 @@ namespace GameEngine
         {
             MotionPerSecond = MotionPerSecond.SetAxis(a, 0);
         }
+
+        /// <summary>
+        /// Translates both the current and frame start positions
+        /// </summary>
+        /// <param name="adjustment"></param>
+        public void CorrectPosition(Vector2 adjustment)
+        {
+            ObjectToMove.Position.Translate(adjustment);
+            FrameStartPosition.Translate(adjustment);
+        }
     }
 }

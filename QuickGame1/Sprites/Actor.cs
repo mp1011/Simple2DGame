@@ -33,8 +33,6 @@ namespace QuickGame1
         
         public UpdatePriority Priority { get { return UpdatePriority.Motion; } }
 
-        public Rectangle FrameStartPosition { get; private set; }
-
         public Rectangle Position { get; private set; }
         public Layer Layer { get; private set; }
         public Vector2 LastNonZeroMotion { get; private set; }

@@ -20,6 +20,7 @@ namespace GameEngine
             return Instance.Renderer.ScreenBounds;
         }
 
+        public Rectangle WindowPosition = new Rectangle();
         public ulong FrameNumber { get; private set; }
         public static Engine Instance { get; private set;}      
 
@@ -55,10 +56,8 @@ namespace GameEngine
                 if (updateGroup.HasRemovedObjects)
                     needsCleanup = true;
             }
-        
-            Renderer.ScreenBounds.Position.Center = Scene.CameraCenter.Position.Center;
 
-            Renderer.ScreenBounds.Position.KeepWithin(Scene.Position);
+            Scene.AdjustCamera();
 
             if (needsCleanup)
             {
@@ -66,14 +65,23 @@ namespace GameEngine
                 if (SecondsUntilNextCleanup <= 0)
                 {
                     SecondsUntilNextCleanup = CleanupSeconds;
-                   
+
                     foreach (var updateGroup in Scene.UpdateGroups)
                         updateGroup.Cleanup();
 
                     foreach (var layer in Scene.Layers)
-                        layer.Cleanup(); 
+                        layer.Cleanup();
                 }
             }
+            else
+            {
+                foreach(var layer in Scene.Layers)
+                {
+                    if (layer.NeedsCleanup)
+                        layer.Cleanup();
+                }
+            }
+
 
             var transition = Scene.CheckTransitions();
             if (transition != null)

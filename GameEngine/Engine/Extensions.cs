@@ -10,15 +10,6 @@ namespace GameEngine
 {
     public static class Extensions
     {
-
-        public static IEnumerable<T> GetEnumValues<T>(this T start)
-        {
-            foreach(var value in Enum.GetValues(typeof(T)))
-            {
-                yield return (T)value;
-            }
-        }
-
         public static T[] RemoveWhere<T>(this List<T> list, Func<T,bool> condition)
         {
             var ret = list.Where(condition).ToArray();
@@ -101,6 +92,17 @@ namespace GameEngine
                 return ret;
             else
                 return defaultValue;
+        }
+    }
+
+    public static class EnumHelper
+    {
+        public static IEnumerable<T> GetValues<T>()
+        {
+            foreach (var value in Enum.GetValues(typeof(T)))
+            {
+                yield return (T)value;
+            }
         }
     }
 }

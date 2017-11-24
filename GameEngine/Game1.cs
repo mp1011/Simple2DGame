@@ -25,7 +25,7 @@ namespace GameEngine
             graphics = new GraphicsDeviceManager(this);
             graphics.PreferredBackBufferWidth = 256*4;
             graphics.PreferredBackBufferHeight = 192*4;
-            
+            graphics.IsFullScreen = false;
             Content.RootDirectory = "Content";
 
             engine = new XNAGameEngine();
@@ -62,7 +62,6 @@ namespace GameEngine
 
 
             engine.Scene = engine.SceneLoader.LoadScene(InitialScene);
-
             // TODO: use this.Content to load your game content here
         }
 
@@ -82,6 +81,8 @@ namespace GameEngine
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            engine.WindowPosition.Set(Window.ClientBounds);
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
                 this.Exit();
@@ -130,8 +131,11 @@ namespace GameEngine
             spriteBatch.End();
 
 
+            var window = Engine.Instance.WindowPosition;
+            var scene = Engine.Instance.Renderer.ScreenBounds.Position;
+            var scale = new Vector2((float)window.Width / (float)scene.Width, (float)window.Height / (float)scene.Height);
 
-            Matrix m = Matrix.CreateScale(4.0f);
+            Matrix m = Matrix.CreateScale(scale.X,scale.Y,1f);
             this.GraphicsDevice.SetRenderTarget(null);
             this.GraphicsDevice.Clear(Color.Red);
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, RasterizerState.CullNone, null, m);

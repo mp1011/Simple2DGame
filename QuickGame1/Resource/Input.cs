@@ -17,6 +17,7 @@ namespace QuickGame1
         public static InputKey Jump = new InputKey("Jump");
         public static InputKey Attack = new InputKey("Attack");
         public static InputKey Start = new InputKey("Start");
+        public static InputKey MenuOK = new InputKey("MenuOK");
 
         public static InputKey PlaceObject = new InputKey("PlaceObject");
         public static InputKey CopyObject = new InputKey("CopyObject");
@@ -47,6 +48,9 @@ namespace QuickGame1
             keyMap.SetMapping(GameKeys.Down, Keys.Down);
             keyMap.SetMapping(GameKeys.Start, Keys.Space);
 
+            keyMap.SetMapping(GameKeys.MenuOK, Keys.Enter);
+
+
             keyMap.SetMapping(GameKeys.EditorMenu, Keys.M);
 
             _input = new XNAKeyboardInputDevice(keyMap, GameKeys.Left, GameKeys.Right, GameKeys.Up, GameKeys.Down, scene);
@@ -64,7 +68,7 @@ namespace QuickGame1
             mouseButtonMap.SetMapping(GameKeys.CopyObject, MouseButton.Right);
 
             _mouseInput = new XNAMouseInputDevice(mouseButtonMap, scene);
-
+         
             return _mouseInput;
         }
     }

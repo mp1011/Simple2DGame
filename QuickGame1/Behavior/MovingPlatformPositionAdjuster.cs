@@ -11,31 +11,20 @@ namespace QuickGame1
         where T : IPlatformerObject, IWorldObject
     {
         private T Actor;
-        UpdatePriority IUpdateable.Priority => UpdatePriority.Motion;
+        UpdatePriority IUpdateable.Priority => UpdatePriority.MovingPlatformPositionCorrection;
 
         IRemoveable IUpdateable.Root => Actor;
 
         public MovingPlatformPositionAdjuster(T actor)
         {
             Actor = actor;
-            actor.Layer.Scene.AddObject(this);
-
-            this.DebugWatch(Fonts.SmallFont, (actor.Layer.Scene as QuickGameScene).InterfaceLayer, x => x.debugText);
+            actor.Layer.Scene.AddObject(this);            
         }
-
-        private string debugText = "";
+        
         void IUpdateable.Update(TimeSpan elapsedInFrame)
         {
-            if(Actor.RidingBlock != null)
-            {               
-                Actor.Position.Translate(Actor.RidingBlock.FrameMotion());
-
-                if (Actor.Motion.MotionPerSecond.Y >= 0 && Actor.Position.Bottom.IsCloseTo(Actor.RidingBlock.Position.Top))
-                {
-                    Actor.Position.SetBottom(Actor.RidingBlock.Position.Top);
-                    Actor.Motion.Stop(Axis.Y);
-                }    
-            }
+            if (Actor.RidingBlock != null)  
+                Actor.Motion.CorrectPosition(Actor.RidingBlock.FrameMotion());
         }
     }
 }

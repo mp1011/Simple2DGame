@@ -97,7 +97,7 @@ namespace QuickGame1
                     new LambdaAction<Actor>(Actor, UpdatePriority.Behavior, Actor.Scene, TileChecker.IsAtWall.Or(TileChecker.IsOnLedge),
                         (a, t) =>
                         {
-                            if (a.Position.GetEdgeDistanceTo(TileChecker.NextWallTile.Position, Axis.X) <= 1)
+                            //if (a.Position.GetEdgeDistanceTo(TileChecker.NextWallTile.Position, Axis.X) <= 1)
                                 a.Direction = a.DirectionAwayFrom(TileChecker.NextWallTile, Axis.X);                            
                         });                    
                 }

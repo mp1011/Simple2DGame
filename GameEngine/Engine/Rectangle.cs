@@ -58,6 +58,14 @@ namespace GameEngine
             Bottom = size.Y;
         }
 
+        public void Set(Microsoft.Xna.Framework.Rectangle r)
+        {
+            Left = r.Left;
+            Top = r.Top;
+            Right = r.Right;
+            Bottom = r.Bottom;
+        }
+
         public void Set(double x, double y, double w, double h)
         {
             Left = x;

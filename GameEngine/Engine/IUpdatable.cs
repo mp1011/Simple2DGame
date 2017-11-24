@@ -12,6 +12,7 @@ namespace GameEngine
         Input,
         Behavior,
         Motion,
+        MovingPlatformPositionCorrection,
         Collision,
         ModalMenu,
         EndUpdate

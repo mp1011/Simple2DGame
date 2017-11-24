@@ -8,6 +8,6 @@ namespace GameEngine
 {
     public interface ISceneLoader
     {
-        Scene LoadScene(SceneID map);
+        Scene LoadScene(SceneID map, bool forceReload=false);
     }
 }

@@ -78,7 +78,7 @@ namespace GameEngine
                 DirectionToTarget = MovingObject.CardinalDirectionTowards(Path.Current);
             }
 
-            MovingObject.MoveInDirection(DirectionToTarget, 20); // todo - speed
+            MovingObject.MoveInDirection(DirectionToTarget, 40); // todo - speed
             
         }
     }

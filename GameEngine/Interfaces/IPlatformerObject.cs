@@ -17,7 +17,7 @@ namespace GameEngine
     public static class PlatformerObjectExtensions
     {
 
-        public static void PutOnGround(this IPlatformerObject obj, TileMap tiles)
+        public static void PutOnGround(this IPlatformerObject obj, TileMap tiles, int ignoreDistance)
         {
             var tile = tiles.GetTilesHit(obj.Position).First();
             while (!tile.IsSolid)
@@ -28,7 +28,8 @@ namespace GameEngine
                 tile = nextTile;
             }
 
-            obj.Position.SetBottom(tile.Position.Top);
+            if (tile.Position.Top < obj.Position.Bottom + ignoreDistance)
+                obj.Position.SetBottom(tile.Position.Top);
         }
     }
 }

@@ -87,6 +87,7 @@
     <Compile Include="Scene\BoundaryTransition.cs" />
     <Compile Include="Scene\IntroScene.cs" />
     <Compile Include="Scene\Ladder.cs" />
+    <Compile Include="Scene\LiveEditor\EditorCursor.cs" />
     <Compile Include="Scene\LiveEditor\EditorMenu.cs" />
     <Compile Include="Scene\LiveEditor\LiveEditor.cs" />
     <Compile Include="Scene\LiveEditor\MapSaver.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="Sprites\Actor.cs" />
     <Compile Include="Sprites\Animation.cs" />
     <Compile Include="Sprites\Fairy.cs" />
+    <Compile Include="Scene\LiveEditor\FrozenObject.cs" />
     <Compile Include="Sprites\MovingBlock.cs" />
     <Compile Include="Sprites\Box.cs" />
     <Compile Include="Sprites\Chest.cs" />

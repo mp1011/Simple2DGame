@@ -10,6 +10,24 @@ namespace GameEngine
     {
         private static DateTime lastPlayerMoveTime;
 
+        private static string _debugString;
+
+        public static string DebugString
+        {
+            get
+            {
+                return _debugString;
+            }
+            set
+            {
+                if(value != _debugString)
+                {
+                    _debugString = value;
+                    System.Diagnostics.Debug.WriteLine("DEBUG: " + _debugString);
+                }
+            }
+        }
+
         private static bool _playerIsMoving;
         public static bool PlayerIsMoving
         {

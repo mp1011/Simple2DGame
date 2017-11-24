@@ -11,12 +11,29 @@ namespace QuickGame1
     static class Textures
     {
 
-        private static TextureInfo slimeTexutre;
+
+        private static TextureInfo cursorTexture;
+        public static TextureInfo CursorTexture
+        {
+            get
+            {
+                return cursorTexture ?? (cursorTexture = new TextureInfo
+                {
+                    ID = "bullets",
+                    CellSize = new Vector2(16, 16),
+                    Origin = new Vector2(122, 267),
+                    Size = new Vector2(520, 361),
+                    AnchorOrigin = AnchorOrigin.Center
+                });
+            }
+        }
+
+        private static TextureInfo slimeTexture;
         public static TextureInfo SlimeTexture
         {
             get
             {
-                return slimeTexutre ?? (slimeTexutre = new TextureInfo
+                return slimeTexture ?? (slimeTexture = new TextureInfo
                 {
                     ID = "HorrorSlime",
                     CellSize = new Vector2(64, 32),

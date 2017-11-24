@@ -19,6 +19,8 @@ namespace GameEngine
 
         bool IRemoveable.IsRemoved => Scene.IsFinished;
 
+        public bool NeedsCleanup { get; private set; }
+
         public Layer(Scene scene)
         {
             Scene =scene;
@@ -36,6 +38,7 @@ namespace GameEngine
         {
             DynamicDisplayable.RemoveAll(p => p.Root.IsRemoved);
             CollidableObjects.RemoveAll(p => p.IsRemoved);
+            NeedsCleanup = false;
         }
 
         public Layer SetNormalScrolling()
@@ -70,7 +73,9 @@ namespace GameEngine
 
             foreach (var d in DynamicDisplayable)
             {
-                if (!d.Root.IsRemoved)
+                if (d.Root.IsRemoved)
+                    NeedsCleanup = true;
+                else
                     d.Draw(renderer);
             }
 

@@ -24,6 +24,11 @@ namespace GameEngine
             return GetExitingSide(movingObject) != BorderSide.None;
         }
 
+        public bool DetectFrameStartCollision(Rectangle movingObject)
+        {
+            return DetectCollision(movingObject,false);
+        }
+
         public BorderSide GetExitingSide(Rectangle movingObject)
         {
             return GetExitingSide(movingObject, 0, 0);

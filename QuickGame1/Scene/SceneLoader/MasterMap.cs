@@ -50,7 +50,7 @@ namespace QuickGame1
             Cells.OutOfBoundsFixedValue = ImageCellType.MapBoundary;
 
             InitMaps();
-            MapRegions.AddRange(FindRegions());
+            MapRegions.AddRange(FindRegions().Select(p=> new Rectangle(p.Left * cellSize.X, p.Top * cellSize.Y, p.Width * cellSize.X , p.Height * cellSize.Y)));
             VerifyMinimumRegionSize();
 
             foreach(var cell in Cells.PointItems)
@@ -76,7 +76,7 @@ namespace QuickGame1
                     }
                     else
                     {
-                        possibleCopyDirections.AddRange(Direction.None.GetEnumValues());
+                        possibleCopyDirections.AddRange(EnumHelper.GetValues<Direction>());
                     }
 
                     var copyDirection = possibleCopyDirections.Where(p => cell.GetAdjacent(p).Value != ImageCellType.MapBoundary)
@@ -133,6 +133,8 @@ namespace QuickGame1
                 return ImageCellType.MovingBlock;
             else if (c == new Color(38, 127, 0))
                 return ImageCellType.PlayerStart;
+            else if (c == new Color(192, 192, 192))
+                return ImageCellType.Path;
             else
                 throw new NotSupportedException();
         }
@@ -171,15 +173,8 @@ namespace QuickGame1
 
         private void VerifyMinimumRegionSize()
         {
-            var screen = Engine.Instance.Renderer.ScreenBounds.Position;
-
-            var minSize = new Vector2((float)(screen.Width / CellSize.X-1), (float)(screen.Height / CellSize.Y-1));
-
-            foreach(var region in MapRegions)
-            {
-                if (region.Width < minSize.X || region.Height < minSize.Y)
-                    throw new Exception($"The map region at ({region.Left},{region.Top}) is smaller than the minimum size of ({minSize.X},{minSize.Y}");
-            }
+            var screen = Engine.Instance.Renderer.ScreenBounds.Position;       
+            MapRegions.RemoveWhere(p => p.Width < screen.Width || p.Height < screen.Height);                   
         }
 
         private Rectangle GetRegionAtLocation(Vector2 pointInMap)
@@ -195,12 +190,14 @@ namespace QuickGame1
 
         public MapTemplate Extract(int regionIndex)
         {
-            var extractedRange = Cells.ExtractBlock(MapRegions[regionIndex]);
+            var mapRegion = MapRegions[regionIndex];
+            var cellRegion = new Rectangle(mapRegion.Left / CellSize.X, mapRegion.Top / CellSize.Y, mapRegion.Width / CellSize.X, mapRegion.Height / CellSize.Y);
+            var extractedRange = Cells.ExtractBlock(cellRegion);
             return new MapTemplate(extractedRange);
         }
 
         /// <summary>
-        /// Converts a pixel position within a certain map to the equivalent tile position within the entire template
+        /// Converts a position within a certain map to the equivalent position within the entire template
         /// </summary>
         /// <param name="scene"></param>
         /// <param name="positionInMap"></param>
@@ -208,13 +205,12 @@ namespace QuickGame1
         public Vector2 PositionInMapToPointInTemplate(SceneID scene, Vector2 positionInMap)
         {
             var mapRegion = MapRegions[scene.MapNumber];
-            var tilePos = new Vector2((int)(positionInMap.X / 16.0), (int)(positionInMap.Y / 16.0));
-            var ret=  mapRegion.UpperLeft.Translate(tilePos);
+            var ret=  mapRegion.UpperLeft.Translate(positionInMap);
             return ret;
         }
 
         /// <summary>
-        /// Converts a pixel position within a certain map to the equivalent tile position within the entire template
+        /// Converts a position within the template to a position with a particular map
         /// </summary>
         /// <param name="scene"></param>
         /// <param name="positionInMap"></param>
@@ -223,8 +219,7 @@ namespace QuickGame1
         {
             var mapRegion = MapRegions[scene.MapNumber];
             var pointInMap = pointInTemplate.Subtract(mapRegion.UpperLeft);
-            var ret = pointInMap.Scale(16);
-            return ret;
+            return pointInMap;
         }
 
     }

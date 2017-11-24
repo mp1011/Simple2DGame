@@ -8,7 +8,12 @@ namespace GameEngine
 {
     public interface ICollidable : IRemoveable
     {
-        bool DetectCollision(Rectangle collidingObject, bool ignoreEdges);
+        bool DetectCollision(Rectangle collidingObject, bool ignoreEdges);      
+    }
+
+    public interface IMovingCollidable : ICollidable
+    {
+        bool DetectFrameStartCollision(Rectangle collidingObject);
     }
     
     public interface ICollisionResponder<TFirst, TSecond>

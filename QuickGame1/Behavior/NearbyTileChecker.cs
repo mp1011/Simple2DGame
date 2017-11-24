@@ -68,7 +68,7 @@ namespace QuickGame1
             if(OnLedge.IsActive)
             {
                 var pitTile = NextGroundTile;
-                while (!pitTile.IsSolid)
+                while (!pitTile.IsSolid && !pitTile.IsBoundary)
                     pitTile = pitTile.GetAdjacent(BorderSide.Bottom);
 
                 pitTile = pitTile.GetAdjacent(BorderSide.Top);

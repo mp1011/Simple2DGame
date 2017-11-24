@@ -40,7 +40,7 @@ namespace QuickGame1
         }
     }
 
-    class MovingBlock : ICollidable, IMovingWorldObject<QuickGameScene>, IDynamicDisplayable, IMovingBlock
+    class MovingBlock : IMovingCollidable, IMovingWorldObject<QuickGameScene>, IDynamicDisplayable, IMovingBlock
     {
         private QuickGameScene Scene;
         private SpriteGrid SpriteGrid;
@@ -94,6 +94,11 @@ namespace QuickGame1
         bool ICollidable.DetectCollision(Rectangle collidingObject, bool ignoreEdges)
         {
             return Position.CollidesWith(collidingObject, ignoreEdges);
+        }
+
+        bool IMovingCollidable.DetectFrameStartCollision(Rectangle collidingObject)
+        {
+            return motionManager.FrameStartPosition.CollidesWith(collidingObject, false);
         }
 
         void IRemoveable.Remove()

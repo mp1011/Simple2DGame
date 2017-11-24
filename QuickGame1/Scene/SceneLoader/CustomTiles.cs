@@ -121,7 +121,7 @@ namespace QuickGame1
 
             return ts;
         }
-        
+
         public static AutogenTiles AutoGenTiles()
         {
             var texture = Textures.RockTiles;
@@ -155,7 +155,7 @@ namespace QuickGame1
 
             var brownRockGrassTop = new AutogenTile(tileSet, 1, 0);
             brownRockGrassTop.Conditions.Add(BorderSide.None, new AutogenTile(tileSet, 4, 0));
-            brownRockGrassTop.MaxMatchesPerScreen = 4;
+            brownRockGrassTop.MaxMatchesPerScreen = 6;
             brownRockGrassTop.MaxPass = 0;
 
             var brownRockGrassTopLeft = new AutogenTile(tileSet, 1, 1);
@@ -192,7 +192,7 @@ namespace QuickGame1
             stones.AddTileChoice(9, 5);
             stones.AddTileChoice(9, 6);
 
-            stones.MaxMatchesPerScreen = 3;
+            stones.MaxMatchesPerScreen = 2;
             stones.Conditions.Add(BorderSide.Bottom, brownRockTiles);
             stones.Conditions.Add(BorderSide.None, AutogenTile.Empty);
 
