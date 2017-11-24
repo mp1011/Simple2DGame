@@ -14,6 +14,7 @@ namespace GameEngine
         public Vector2 TileIndex { get; set; }
         public bool IsSolid { get; set; }
         public bool IsCollidable { get; set; }
+        public bool IsBoundary { get; set; }
         public TileMap TileMap { get; set; }
 
         public bool IsEmpty => TileID == TileMap.EmptyCell;
@@ -51,7 +52,7 @@ namespace GameEngine
             ret.TileMap = tileHit.TileMap;
             ret.TileID = tileCel;
             ret.TileIndex = gridPoint;
-
+            ret.IsBoundary = tileHit.IsBoundary;
             return ret;
         }
 
@@ -116,7 +117,6 @@ namespace GameEngine
         {
             Layer = layer;
             Tiles = new SpriteGrid { Texture = texture, Cells = new ArrayGrid<int>(mapSize) };
-            Tiles.Cells.ReplaceOutOfBoundsTilesWithAdjacent = true;
         }
 
         void IDisplayable.Draw(IRenderer painter)
@@ -155,10 +155,11 @@ namespace GameEngine
                 TileMap = this,
                 TileIndex = gridPoint,
                 Position = gridPoint.ToGridCell(Tiles.Texture.CellSize),
-                IsSolid = tileCel != EmptyCell
+                IsSolid = tileCel != EmptyCell,
+                IsBoundary = gridPoint.X <= 0 || gridPoint.Y <= 0 || 
+                gridPoint.X >= Tiles.Cells.Size.X -1 || gridPoint.Y == Tiles.Cells.Size.Y -1
             };
         }
-
 
         bool ICollidable.DetectCollision(Rectangle collidingObject, bool ignoreEdges)
         {

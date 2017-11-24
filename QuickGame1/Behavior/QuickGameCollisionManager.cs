@@ -36,7 +36,8 @@ namespace QuickGame1
             OnCollisionBetween<IPlatformerObject, IMovingBlock>()
               .ThenDoOnce((platformer, block, collisionInfo) =>
               {
-                  platformer.RidingBlock = block;
+                  if(platformer.Position.Top < block.Position.Top)
+                      platformer.RidingBlock = block;
               })
               .Else((platformer, b)=>
                 {
@@ -55,6 +56,7 @@ namespace QuickGame1
                 {
                     platformer.IsOnGround.Active = false;
                 });
+
             
             OnCollisionBetween<IPlatformerObject, WaterCollisionDetector>()
                 .Then((actor, water) =>
@@ -121,9 +123,6 @@ namespace QuickGame1
                             victim.RecoilFrom(damager);
                     }
                 });
-
-            OnCollisionBetween<IPlatformerObject, IBlock>()
-                .Stop();
 
             OnCollisionBetween<Swoosh, Box>()
                 .Then((s, box) =>
