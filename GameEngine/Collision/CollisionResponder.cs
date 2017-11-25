@@ -11,7 +11,7 @@ namespace GameEngine
         bool DetectCollision(Rectangle collidingObject, bool ignoreEdges);      
     }
 
-    public interface IMovingCollidable : ICollidable
+    public interface IMovingCollidable : ICollidable, IWithPosition
     {
         bool DetectFrameStartCollision(Rectangle collidingObject);
     }

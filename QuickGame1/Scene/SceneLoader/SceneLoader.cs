@@ -48,7 +48,9 @@ namespace QuickGame1
             DebugText.NewTextPosition = new Vector2(50, 50);
             LastScene = ret;
 
-            loadedScenes.Add(map.ToString(), ret);
+            if(!forceReload)
+                loadedScenes.Add(map.ToString(), ret);
+
             return ret;
         }
 

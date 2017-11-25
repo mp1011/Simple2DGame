@@ -191,6 +191,21 @@ namespace QuickGame1
             }
         }
 
+        private static TextureInfo breakableBlockTexture;
+        public static TextureInfo BrokenBlockTexture
+        {
+            get
+            {
+                return breakableBlockTexture ?? (breakableBlockTexture = new TextureInfo
+                {
+                    ID = "sheet",
+                    CellSize = new Vector2(16, 16),
+                    Size = new Vector2(16, 16),
+                    Origin = new Vector2(257, 112)
+                });
+            }
+        }
+
         private static TextureInfo rockTiles;
         public static TextureInfo RockTiles
         {

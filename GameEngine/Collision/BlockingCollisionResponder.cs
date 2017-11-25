@@ -23,8 +23,9 @@ namespace GameEngine
         void ICollisionResponder<TFirst, TSecond>.RespondToCollision(TFirst moveableObject, TSecond collidable, CollisionInfo collisionInfo)
         {
             var movingCollidable = collidable as IMovingCollidable;
-
             var tryPosition = new Rectangle();
+            tryPosition.Set(moveableObject.Position);
+
             bool collideX, collideY;
 
             tryPosition.Set(moveableObject.Position);
@@ -47,24 +48,24 @@ namespace GameEngine
 
             if (collideY && !collideX)
             {
-                TryCorrectPosition(tryPosition, moveableObject, collidable, correctX: false, correctY: true);
+                TryCorrectPosition(tryPosition, moveableObject, collidable, movingCollidable, correctX: false, correctY: true);
             }
 
             if (collideX && !collideY)
             {
-                TryCorrectPosition(tryPosition, moveableObject, collidable, correctX: true, correctY: false);
+                TryCorrectPosition(tryPosition, moveableObject, collidable, movingCollidable, correctX: true, correctY: false);
             }
 
             if (collidable.DetectCollision(tryPosition,false))
             {
-                TryCorrectPosition(tryPosition, moveableObject, collidable, correctX: false, correctY: true);
+                TryCorrectPosition(tryPosition, moveableObject, collidable, movingCollidable, correctX: false, correctY: true);
 
                 if(collidable.DetectCollision(tryPosition,false))
-                    TryCorrectPosition(tryPosition, moveableObject, collidable, true, true);
+                    TryCorrectPosition(tryPosition, moveableObject, collidable, movingCollidable, true, true);
             }
 
             if (collidable.DetectCollision(tryPosition,false))
-                TryCorrectPosition(tryPosition, moveableObject, collidable, true, true, true);
+                TryCorrectPosition(tryPosition, moveableObject, collidable, movingCollidable, true, true, true);
 
             BeforePositionCorrected(moveableObject, collidable, collisionInfo, tryPosition);
 
@@ -83,7 +84,7 @@ namespace GameEngine
                 moveableObject.Motion.Stop(Axis.Y);
         }
 
-        private static void TryCorrectPosition(Rectangle tryPosition, TFirst moveableObject, ICollidable collidable, bool correctX, bool correctY, bool correctPastOriginal=false)
+        private static void TryCorrectPosition(Rectangle tryPosition, TFirst moveableObject, ICollidable collidable, IMovingCollidable movingCollidable, bool correctX, bool correctY, bool correctPastOriginal=false)
         {
             float newX = tryPosition.Center.X;
             float newY = tryPosition.Center.Y;
@@ -98,7 +99,13 @@ namespace GameEngine
                 deltaY = (newY - moveableObject.Motion.FrameStartPosition.Center.Y).Unit();
 
                 if (deltaX == 0 && deltaY == 0)
-                    deltaY = -1;
+                {
+                    if (movingCollidable == null)
+                        deltaY = -1;
+                    else
+                        deltaY = (newY - movingCollidable.Position.Center.Y).Unit();
+                    
+                }
             }
             while (collidable.DetectCollision(tryPosition,true))
             {

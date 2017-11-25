@@ -76,6 +76,7 @@ namespace QuickGame1
             NeededSounds.AddRange(Sounds.GetAllSounds());
 
             new Spike(this);
+            new Spring(this);
 
             new WaterMover(WaterLayer);
 
@@ -92,6 +93,10 @@ namespace QuickGame1
             //new Elf().SetShopHandler(sh).MoveTo(180, 50).Direction = Direction.Left;
 
             new MapSaver().LoadFromDisk(this);
+
+            //DebugText.DebugWatch(this, Fonts.SmallFont, InterfaceLayer, s => "O=" + s.SolidLayer.CollidableObjects.Count().ToString());
+            //DebugText.DebugWatch(this, Fonts.SmallFont, InterfaceLayer, s => "F=" + s.SolidLayer.CollidableObjects.OfType<FrozenObject>().Count().ToString());
+            //DebugText.DebugWatch(this, Fonts.SmallFont, InterfaceLayer, s => "C=" + s.SolidLayer.CollidableObjects.OfType<Coin>().Count().ToString());
         }
 
         protected override IEnumerable<SceneTransition> LoadTransitions()

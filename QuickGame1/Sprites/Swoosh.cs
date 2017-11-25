@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 
 namespace QuickGame1
 {
-    class Swoosh : MovingActor, IDamager
+    class Swoosh : MovingActor, IDamager, ITileBreaker
     {
+        bool ITileBreaker.CanBreakTiles { get; set; } = true;
+
         DamageType IDamager.DamageType => DamageType.PlayerAttack;
 
         public Swoosh() : base(QuickGameScene.Current, Textures.SwooshTexture)

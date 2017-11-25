@@ -18,9 +18,7 @@ namespace QuickGame1
         private EditorCursor Cursor;
         public EditorMenu Menu { get; private set; }
         public ItemSelector ItemSelector { get; private set; }
-
-        public bool Frozen { get; set; }
-
+        
         UpdatePriority IUpdateable.Priority => UpdatePriority.BeginUpdate;
 
         IRemoveable IUpdateable.Root => Scene.InterfaceLayer;
@@ -40,10 +38,11 @@ namespace QuickGame1
                 {
                     if(ClipboardItem != null)
                     {
+                        FreezeScene(Scene);
+
                         var newItem = ClipboardItem.CreateItem();
                         newItem.Position.Center = Cursor.Position.Center;
-                        if (Frozen)
-                            FrozenObject.Create(newItem, Scene);
+                        FrozenObject.Create(newItem, Scene);
                     }
                 }
             }
@@ -84,35 +83,28 @@ namespace QuickGame1
             ItemSelector = new ItemSelector(scene, this);
         }
 
-        public IEnumerable<FrozenObject> FreezeScene(QuickGameScene scene)
+        public bool IsFrozen(QuickGameScene scene)
         {
-            if (!Frozen || scene != Scene)
-            {
-                var mapObjects = scene.SolidLayer.CollidableObjects.OfType<IEditorPlaceable>().ToArray();
-                foreach (var mo in mapObjects)
-                {
-                    yield return FrozenObject.Create(mo, Scene);
-                }
+            return scene.SolidLayer.CollidableObjects.OfType<FrozenObject>().Any();
+        }
 
-                Frozen = true;
-            }
+        public void FreezeScene(QuickGameScene scene)
+        {
+            var mapObjects = scene.SolidLayer.CollidableObjects.OfType<IEditorPlaceable>().ToArray();
+            foreach (var mo in mapObjects)
+                FrozenObject.Create(mo, scene);
+            scene.SolidLayer.Cleanup();
         }
 
         public void UnfreezeScene(QuickGameScene scene)
         {
-            if (!Frozen)
-                return;
-
-            var mapObjects = Scene.SolidLayer.CollidableObjects.OfType<FrozenObject>().ToArray();
-            foreach (var frozenObject in mapObjects)
-            {
+            var mapObjects = scene.SolidLayer.CollidableObjects.OfType<FrozenObject>().ToArray();
+            foreach (var frozenObject in mapObjects)                
                 frozenObject.Unfreeze();
-            }
 
-            Frozen = false;
+            scene.SolidLayer.Cleanup();
         }
-
-      
+        
     }
 
  

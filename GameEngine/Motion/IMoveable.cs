@@ -33,6 +33,15 @@ namespace GameEngine
             xyMotion.MotionPerSecond = d.ToXY().Scale(speed);
         }
 
+        public static void MoveInDirection(this IMoveable m, Vector2 unitVector, int speed)
+        {
+            var xyMotion = m.Motion.Forces.OfType<XYMotion>().FirstOrDefault();
+            if (xyMotion == null)            
+                xyMotion = new XYMotion(m.ToString() + " XY", m);
+            
+            xyMotion.MotionPerSecond = unitVector.Scale(speed);
+        }
+
         public static void PushInDirection(this IMoveable m, Direction d, ConfigValue<AxisMotionConfig> motionConfig)
         {
             var motion = m.Motion.Forces.OfType<AxisMotion>().FirstOrDefault(p => p.Name == motionConfig.Name);

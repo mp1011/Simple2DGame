@@ -12,6 +12,12 @@ namespace GameEngine
         void OnItemChosen();
     }
     
+    public struct MenuKeys
+    {
+        public InputKey Select;
+        public InputKey Cancel;
+    }
+
     public class Menu<TItem> :IUpdateable
         where TItem : IMenuItem
     {
@@ -23,9 +29,11 @@ namespace GameEngine
         UpdatePriority IUpdateable.Priority => UpdatePriority.ModalMenu;
         IRemoveable IUpdateable.Root => Layer;
         private IGameInputWithDPad Input;
-        private InputKey SelectKey;
+        private MenuKeys MenuKeys;
 
         private bool setVisible = false;
+        private bool hideNextFrame = false;
+
         public bool Visible
         {
             get
@@ -37,13 +45,17 @@ namespace GameEngine
                 if (!value)
                     MenuPanel.Visible = false;
                 else
+                {
                     setVisible = true;
+                    foreach (var item in Options)
+                        item.RefreshText();
+                }
             }
         }
 
         protected IGameInputWithDPad GetInput() { return Input; }
 
-        public Menu(Layer interfaceLayer, SpriteFont font, BorderTileSet tileSet, IGameInputWithDPad input, InputKey selectKey)
+        public Menu(Layer interfaceLayer, SpriteFont font, BorderTileSet tileSet, IGameInputWithDPad input, MenuKeys menuKeys)
         {
             MenuPanel = new LayoutPanel(tileSet, interfaceLayer);
             MenuPanel.Position.Center = Engine.GetScreenSize().Center;
@@ -53,7 +65,7 @@ namespace GameEngine
             Font = font;         
             Input = input;
 
-            SelectKey = selectKey;
+            MenuKeys = menuKeys;
 
             foreach (var group in interfaceLayer.Scene.UpdateGroups)
             {
@@ -98,6 +110,19 @@ namespace GameEngine
             
         void IUpdateable.Update(TimeSpan elapsedInFrame)
         {
+            if(Input.GetButtonDown(MenuKeys.Cancel))
+            {
+                hideNextFrame = true;
+                return;
+            }
+
+            if(hideNextFrame)
+            {
+                hideNextFrame = false;
+                Visible = false;
+                return;
+            }
+
             if (!MenuPanel.Visible)
             {
                 if(setVisible)
@@ -121,7 +146,7 @@ namespace GameEngine
                     break;
             }
 
-            if (Input.GetButtonPressed(SelectKey))
+            if (Input.GetButtonPressed(MenuKeys.Select))
             {
                 SelectedItem.OnItemChosen();
                 Options[SelectedOption].Selected = true;
@@ -155,10 +180,14 @@ namespace GameEngine
             set
             {
                 _selected = value;
-                Text.Message = (_selected ? Menu.SelectedCharacter : " ") + Item.ToString();
+                RefreshText();
             }
         }
 
+        public void RefreshText()
+        {
+            Text.Message = (Selected ? Menu.SelectedCharacter : " ") + Item.ToString();
+        }
 
         public IRemoveable Root => Menu.Layer;
 

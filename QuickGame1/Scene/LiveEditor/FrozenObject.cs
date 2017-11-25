@@ -15,7 +15,6 @@ namespace QuickGame1
         private FrozenObject(IEditorPlaceable actual, QuickGameScene scene)
         {
             ActualObject = actual;
-            scene.SolidLayer.CollidableObjects.Add(this);
             scene.SolidLayer.AddObject(this);
             ActualObject.Remove();
             Scene = scene;
@@ -39,6 +38,9 @@ namespace QuickGame1
 
         public static FrozenObject Create(IEditorPlaceable actual, QuickGameScene scene)
         {
+            if (actual.IsRemoved)
+                return null;
+
             return (actual as FrozenObject) ?? new FrozenObject(actual, scene);
         }
 
@@ -56,9 +58,13 @@ namespace QuickGame1
 
         public void Unfreeze()
         {
-            isRemoved = true;
-            var newObject = Activator.CreateInstance(ActualObject.GetType()) as IEditorPlaceable;
-            newObject.Position.Center = ActualObject.Position.Center;
+            if (!isRemoved)
+            {
+                isRemoved = true;
+                var newObject = Activator.CreateInstance(ActualObject.GetType()) as IEditorPlaceable;
+                newObject.Position.Center = ActualObject.Position.Center;
+            }
         }
     }
+
 }

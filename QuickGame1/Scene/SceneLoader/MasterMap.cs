@@ -8,33 +8,7 @@ using System.Threading.Tasks;
 using Rectangle = GameEngine.Rectangle;
 
 namespace QuickGame1
-{
-    enum ImageCellType
-    {
-        Empty,
-        BrownRock,
-        BlueRock,
-        Water,
-        GrassBackground,
-        Prize,
-        Spike,
-        Box,
-        Enemy,
-        Ladder,
-        MovingBlock,
-        Path,
-        PlayerStart,
-        MapBoundary
-    }
-
-    static class ImageCellTypeExtensions
-    {
-        public static bool IsSolid(this ImageCellType ct)
-        {
-            return ct == ImageCellType.BrownRock || ct == ImageCellType.BlueRock;
-        }
-    }
-
+{   
     class MapTemplate
     {
         public List<Rectangle> MapRegions = new List<Rectangle>();
@@ -113,18 +87,16 @@ namespace QuickGame1
                 return ImageCellType.Water;
             else if (c == Color.White)
                 return ImageCellType.Empty;
-            else if (c == new Color(255, 247, 38))
-                return ImageCellType.Prize;
             else if (c == new Color(0, 255, 0))
                 return ImageCellType.GrassBackground;
             else if (c == Color.Black)
                 return ImageCellType.MapBoundary;
             else if (c == Color.Yellow)
-                return ImageCellType.Prize;
+                return ImageCellType.Spring;
             else if (c == Color.Gray)
                 return ImageCellType.Spike;
             else if (c == Color.Red)
-                return ImageCellType.Enemy;
+                return ImageCellType.BreakableBlock;
             else if (c == new Color(178, 0, 255))
                 return ImageCellType.Box;
             else if (c == new Color(127, 51, 0))

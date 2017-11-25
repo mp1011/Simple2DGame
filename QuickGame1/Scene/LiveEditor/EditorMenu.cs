@@ -56,13 +56,17 @@ namespace QuickGame1
             var playerPos = Scene.Player.Position.Center;
 
             foreach (var objectInThisScene in Scene.SolidLayer.CollidableObjects.OfType<IEditorPlaceable>())
+            {
                 objectInThisScene.Remove();
+            }
+
+            Scene.SolidLayer.Cleanup();
 
             var reloadedScene = Engine.Instance.SceneLoader.LoadScene(Scene.ID, forceReload: true) as QuickGameScene;
-            var newObjects = editor.FreezeScene(reloadedScene).ToArray();
+            var newObjects = reloadedScene.SolidLayer.CollidableObjects.OfType<IEditorPlaceable>().ToArray().Select(p => FrozenObject.Create(p, Scene)).ToArray();
+
             Engine.Instance.Scene = Scene;
-            Scene.SolidLayer.CollidableObjects.AddRange(newObjects);
-            Editor.FreezeScene(Scene);
+            QuickGameScene.Current = Scene;
 
             editor.Menu.Visible = false;
         }
@@ -78,7 +82,7 @@ namespace QuickGame1
         }
         public override string ToString()
         {
-            if (Editor.Frozen)
+            if (Editor.IsFrozen(Scene))
                 return "UNFREEZE";
             else
                 return "FREEZE";
@@ -86,7 +90,7 @@ namespace QuickGame1
 
         protected override void OnOptionSelected(LiveEditor editor)
         {
-            if (editor.Frozen)
+            if (Editor.IsFrozen(Scene))
                 editor.UnfreezeScene(Scene);
             else
                 editor.FreezeScene(Scene);
@@ -124,7 +128,8 @@ namespace QuickGame1
 
     class EditorMenu : Menu<EditorOption>
     {
-        public EditorMenu(QuickGameScene Scene, LiveEditor editor) : base(Scene.InterfaceLayer, Fonts.SmallFont, GameTiles.Border(), Input.GetInput(Scene), GameKeys.MenuOK)
+        public EditorMenu(QuickGameScene Scene, LiveEditor editor) : base(Scene.InterfaceLayer, Fonts.SmallFont, GameTiles.Border(), Input.GetInput(Scene), 
+            new MenuKeys { Select = GameKeys.MenuOK, Cancel = GameKeys.EditorMenu })
         {
             AddOption(new ItemsOption() { Editor = editor });
             AddOption(new FreezeItemsOption(Scene) { Editor = editor });
@@ -163,7 +168,8 @@ namespace QuickGame1
 
     class ItemSelector : Menu<EditorItem>
     {
-        public ItemSelector(QuickGameScene Scene, LiveEditor editor) : base(Scene.InterfaceLayer, Fonts.SmallFont, GameTiles.Border(), Input.GetInput(Scene), GameKeys.MenuOK)
+        public ItemSelector(QuickGameScene Scene, LiveEditor editor) : base(Scene.InterfaceLayer, Fonts.SmallFont, GameTiles.Border(), Input.GetInput(Scene),
+            new MenuKeys { Select = GameKeys.MenuOK, Cancel = GameKeys.EditorMenu })
         {
             foreach(var cellType in EnumHelper.GetValues<CellType>().Where(p=>p!=CellType.Empty))
                 AddOption(new EditorItem() { ItemType = cellType, Editor = editor} );

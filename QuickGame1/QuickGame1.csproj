@@ -83,14 +83,17 @@
     <Compile Include="Behavior\PlayerControl.cs" />
     <Compile Include="Behavior\Prize.cs" />
     <Compile Include="Behavior\Recoil.cs" />
+    <Compile Include="Behavior\Spring.cs" />
     <Compile Include="Resource\Maps.cs" />
     <Compile Include="Scene\BoundaryTransition.cs" />
+    <Compile Include="Scene\BreakableTile.cs" />
     <Compile Include="Scene\IntroScene.cs" />
     <Compile Include="Scene\Ladder.cs" />
     <Compile Include="Scene\LiveEditor\EditorCursor.cs" />
     <Compile Include="Scene\LiveEditor\EditorMenu.cs" />
     <Compile Include="Scene\LiveEditor\LiveEditor.cs" />
     <Compile Include="Scene\LiveEditor\MapSaver.cs" />
+    <Compile Include="Scene\SceneLoader\ImageCellType.cs" />
     <Compile Include="Scene\SceneLoader\MasterMap.cs" />
     <Compile Include="Scene\SceneLoader\SceneLoader.cs" />
     <Compile Include="Shop\Shop.cs" />
@@ -123,6 +126,7 @@
     <Compile Include="Sprites\Enemy.cs" />
     <Compile Include="Sprites\EnemyBullet.cs" />
     <Compile Include="Sprites\Grapeman.cs" />
+    <Compile Include="Sprites\Shrapnel.cs" />
     <Compile Include="Sprites\Sign.cs" />
     <Compile Include="Sprites\Slime.cs" />
     <Compile Include="Sprites\SmallHeart.cs" />

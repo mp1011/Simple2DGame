@@ -31,6 +31,30 @@ namespace QuickGame1
                 };
             }
 
+            if(tileID == Tiles.Texture.PointToIndex(4,2))
+            {
+                return new QuickGameTile
+                {
+                    IsSolid = true,
+                    IsCollidable = true,
+                    IsSpring = true,
+                    Position = new GameEngine.Rectangle(Tiles.Texture.CellSize)
+                };
+
+            }
+
+            if(tileID == Tiles.Texture.PointToIndex(1,7))
+            {
+                return new QuickGameTile
+                {
+                    IsSolid = true,
+                    IsCollidable = true,
+                    IsSpike = false,
+                    IsBreakable=true,
+                    Position = new GameEngine.Rectangle(Tiles.Texture.CellSize)
+                };
+            }
+
             if (tileID == Tiles.Texture.PointToIndex(3, 7))
             {
                 return new QuickGameTile
@@ -78,5 +102,7 @@ namespace QuickGame1
         public bool IsSpike { get; set; }
         public bool IsWater { get; set; }
         public bool IsLadder { get; set; }
+        public bool IsBreakable { get; set; }
+        public bool IsSpring { get; set; }
     }
 }

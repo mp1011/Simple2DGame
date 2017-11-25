@@ -8,14 +8,25 @@ using Microsoft.Xna.Framework;
 namespace GameEngine
 {
     public class XYMotion : IMotionAdjuster
-    {        
-        public Vector2 MotionPerSecond { get; set; }
+    {
+        private Vector2 _mps = Vector2.Zero;
+
+        public Vector2 MotionPerSecond
+        {
+            get { return _mps; }
+            set
+            {
+                _mps = value;
+                applied = false;
+            }
+        }
         
         public float DistancePerSecond
         {
             get { return MotionPerSecond.Length(); }
             set
             {
+                applied = false;
                 MotionPerSecond = MotionPerSecond.SetLength(value);
             }
         }
@@ -25,6 +36,7 @@ namespace GameEngine
             get { return MotionPerSecond.GetDegrees(); }
             set
             {
+                applied = false;
                 MotionPerSecond = MotionPerSecond.SetDegrees(value);
             }
         }
@@ -40,10 +52,14 @@ namespace GameEngine
 
         bool IMotionAdjuster.Active { get; set; } = true;
 
+        private bool applied = false;
         Vector2 IMotionAdjuster.AdjustMotionPerSecond(TimeSpan elapsedInFrame, Vector2 currentMotionPerSecond)
         {
-            //todo, handle adding to existing motion
-            return MotionPerSecond;   
+            if (applied)
+                return currentMotionPerSecond;
+
+            applied = true;
+            return MotionPerSecond;
         }
     }
 }

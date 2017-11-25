@@ -37,6 +37,15 @@ namespace QuickGame1
             return ts;
         }
 
+        public static BorderTileSet BreakableBlock()
+        {
+            var ts = new BorderTileSet(Textures.RockTiles);
+            ts.Set(BorderSide.EmptySpace, 0, 7);
+            ts.Set(BorderSide.None, 1, 7);
+
+            return ts;
+        }
+
 
         public static BorderTileSet Grass()
         {

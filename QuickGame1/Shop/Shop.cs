@@ -25,7 +25,8 @@ namespace QuickGame1
     class ShopMenu : Menu<ShopOption>
     {
     
-        public ShopMenu(QuickGameScene scene) : base(scene.InterfaceLayer, Fonts.SmallFont, GameTiles.Border(), Input.GetInput(scene), GameKeys.Attack)
+        public ShopMenu(QuickGameScene scene) : base(scene.InterfaceLayer, Fonts.SmallFont, GameTiles.Border(), Input.GetInput(scene),
+            new MenuKeys { Select = GameKeys.MenuOK, Cancel = GameKeys.Start })
         {
 
             MenuPanel.AddItem(new GameText(Fonts.SmallFont, "WELCOME!", scene.InterfaceLayer));

@@ -26,7 +26,7 @@ namespace QuickGame1
 
             template.BrownRockMap.Apply(solidTiles);
             template.LadderMap.Apply(solidTiles, applyEmptyCells: false);
-
+         
             var grassTiles = new QuickGameTileMap(scene.SolidLayer, template.GrassMap.TileSet.Texture, template.Cells.Size);
             template.GrassMap.Apply(grassTiles);
 
@@ -47,21 +47,18 @@ namespace QuickGame1
                 if (template.Cells.GetFromPoint(point) == ImageCellType.PlayerStart)
                 {
                     scene.PlayerStart = new Vector2(point.X * 16, point.Y * 16);
-                }
-                else if (template.Cells.GetFromPoint(point) == ImageCellType.Prize)
-                {
-                    var coin = new Coin();
-                    coin.SetPosition(point.X * 16, point.Y * 16);
-                }
+                }              
                 else if (template.Cells.GetFromPoint(point) == ImageCellType.Spike)
                 {
                     solidTiles.Tiles.Cells.Set(point, solidTiles.Tiles.Texture.PointToIndex(3, 7));
                 }
-                else if (template.Cells.GetFromPoint(point) == ImageCellType.Enemy)
+                else if (template.Cells.GetFromPoint(point) == ImageCellType.Spring)
                 {
-                    //new Grapeman().SetPosition(point.X * 16, (point.Y * 16)-16);
-                    // new Snake().MoveTo(point.X * 16, point.Y * 16);
-                    new Slime().SetPosition(point.X * 16, (point.Y * 16)-32);
+                    solidTiles.Tiles.Cells.Set(point, solidTiles.Tiles.Texture.PointToIndex(4, 2));
+                }
+                else if (template.Cells.GetFromPoint(point) == ImageCellType.BreakableBlock)
+                {
+                    solidTiles.Tiles.Cells.Set(point, solidTiles.Tiles.Texture.PointToIndex(1, 7));
                 }
                 else if (template.Cells.GetFromPoint(point) == ImageCellType.Box)
                 {

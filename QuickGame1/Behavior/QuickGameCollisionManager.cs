@@ -18,6 +18,18 @@ namespace QuickGame1
 
         private void AddBackgroundCollisions()
         {
+
+            OnCollisionBetween<IPlatformerObject, Spring>()
+                .Then((p, s) =>
+                {
+                    var ySpeed = p.Motion.MotionPerSecond.Y;
+                    if(ySpeed > 20)
+                    {
+                        p.MoveInDirection(Direction.Up, (int)(ySpeed * 1.2));
+                    }
+
+                });
+
             OnCollisionBetween<IBounces, TileMap>()
                 .Stop()
                 .Then((bouncingThing, map, collisionInfo) =>
@@ -90,6 +102,9 @@ namespace QuickGame1
                {
                    LadderHandler.EndClimb(actor);
                });
+
+            OnCollisionBetween<ITileBreaker, QuickGameTileMap>()
+                .Then((actor, map) => TileBreakerHandler.CheckForBrokenTiles(actor, map));
 
         }
 
