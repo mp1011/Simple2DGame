@@ -73,9 +73,9 @@ namespace QuickGame1
                     pathPoints.Add(new PathPoint((int)point.X * 16, (int)point.Y * 16));
                 }
             }
-
-            MovingBlockFactory.CreateBlocks(scene, movingBlockPieces, pathPoints);
             
+            MovingBlockFactory.CreateBlocks(scene, movingBlockPieces, pathPoints);
+           
             var agt = GameTiles.AutoGenTiles();
             agt.Apply(solidTiles);
 

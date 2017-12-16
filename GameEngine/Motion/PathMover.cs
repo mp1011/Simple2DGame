@@ -17,14 +17,12 @@ namespace GameEngine
         private Vector2[] Path;
         private IMovingWorldObject MovingObject;
         private BoundedInteger TargetNode;
-        private XYMotion Motion;
-
+       
         public PathMover(IMovingWorldObject movingObject, params Vector2[] path)
         {
             MovingObject = movingObject;
             Path = path;
-            TargetNode = new BoundedInteger(path.Length-1).SetToMin();
-            Motion = new XYMotion("Path Motion", movingObject);            
+            TargetNode = new BoundedInteger(path.Length-1).SetToMin();       
             movingObject.Layer.Scene.AddObject(this);
             MovingObject.Position.Center = path.First();
         }
@@ -42,12 +40,12 @@ namespace GameEngine
             {
                 MovingObject.Position.Center = targetPoint;
                 TargetNode++;
-                Motion.DistancePerSecond = 0;
+                throw new NotImplementedException();
+               // Motion.DistancePerSecond = 0;
             }
             else
             {
-                Motion.DistancePerSecond = DistancePerSecond;
-                Motion.AngleInDegrees = MovingObject.Position.Center.GetDegreesTo(targetPoint);
+                MovingObject.MoveInDirection(MovingObject.Position.Center.GetDegreesTo(targetPoint), DistancePerSecond);
             }
             
         }

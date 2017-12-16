@@ -14,56 +14,62 @@ namespace GameEngine
 
     public static class IMoveableExtensions
     {
-        public static Vector2 FrameMotion(this IMoveable m)
+        /// <summary>
+        /// Constant motion in the given direction
+        /// </summary>
+        /// <param name="dir"></param>
+        /// <param name="motionPerSecond"></param>
+        public static void MoveInDirection(this IMoveable objectToMove, Direction dir, float motionPerSecond)
         {
-            return m.Position.Center.Subtract(m.Motion.FrameStartPosition.Center);
-        }
+            var xy = dir.ToXY() * motionPerSecond;
 
-        public static void MoveInDirection(this IMoveable m, Direction d, int speed)
-        {
-            m.Direction = d;
-
-            var xyMotion = m.Motion.Forces.OfType<XYMotion>().FirstOrDefault();
-            if(xyMotion == null)
+            objectToMove.Motion.AdjustImmediately(m =>
             {
-                xyMotion = new XYMotion(m.ToString() + " XY", m);
-                m.Motion.Forces.Add(xyMotion);
-            }
+                m.X.Current = xy.X;
+                m.Y.Current = xy.Y;
+                m.X.Target = xy.X;
+                m.Y.Target = xy.Y;
+            });
 
-            xyMotion.MotionPerSecond = d.ToXY().Scale(speed);
+            objectToMove.Direction = dir;
         }
 
-        public static void MoveInDirection(this IMoveable m, Vector2 unitVector, int speed)
+        /// <summary>
+        /// Constant motion in the given direction
+        /// </summary>
+        /// <param name="dir"></param>
+        /// <param name="motionPerSecond"></param>
+        public static void MoveInDirection(this IMoveable objectToMove, double degrees, float motionPerSecond)
         {
-            var xyMotion = m.Motion.Forces.OfType<XYMotion>().FirstOrDefault();
-            if (xyMotion == null)            
-                xyMotion = new XYMotion(m.ToString() + " XY", m);
-            
-            xyMotion.MotionPerSecond = unitVector.Scale(speed);
-        }
-
-        public static void PushInDirection(this IMoveable m, Direction d, ConfigValue<AxisMotionConfig> motionConfig)
-        {
-            var motion = m.Motion.Forces.OfType<AxisMotion>().FirstOrDefault(p => p.Name == motionConfig.Name);
-            if (motion == null)
+            var xy = degrees.DegreesToVector(motionPerSecond);
+            objectToMove.Motion.AdjustImmediately(m =>
             {
-                motion = new AxisMotion(motionConfig.Name, m, motionConfig.Value).Set(deactivateWhenTargetReached:true,flipWhen: Direction.Left);
-            }
-
-            m.Direction = d;
-            motion.Active = true;
+                m.X.Current = xy.X;
+                m.Y.Current = xy.Y;
+                m.X.Target = xy.X;
+                m.Y.Target = xy.Y;
+            });
         }
 
-        public static void Jump(this IMoveable m, ConfigValue<AxisMotionConfig> config)
+        /// <summary>
+        /// One-time push in the given direction 
+        /// </summary>
+        /// <param name="dir"></param>
+        /// <param name="motionPerSecond"></param>
+        public static void PushInDirection(this IMoveable objectToMove, Direction dir, float motionPerSecond)
         {
-            var jump = m.Motion.Forces.OfType<AxisMotion>().FirstOrDefault(p => p.Name == config.Name);
-            if (jump == null)
+            var xy = dir.ToXY() * motionPerSecond;
+            objectToMove.Motion.AdjustImmediately(m =>
             {
-                jump = new AxisMotion(config.Name, m, config.Value).Set(deactivateAfterStart: true);              
-            }
+                m.X.Current = xy.X;
+                m.Y.Current = xy.Y;
+            });
+        }
 
-            jump.Active = true;
-            
+        public static void Jump(this IMoveable m, float jumpStrength)
+        {
+            m.PushInDirection(Direction.Up, jumpStrength);
         }
     }
+  
 }

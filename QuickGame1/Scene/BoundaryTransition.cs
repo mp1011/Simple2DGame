@@ -8,38 +8,40 @@ using System.Threading.Tasks;
 
 namespace QuickGame1
 {
-    class QuickGameBoundaryTransition : BoundaryTransition<King>
+    class QuickGameBoundaryTransition : BoundaryTransition
     {
+        public override bool RequiresActor => true;
+
         private MapTemplate MasterTemplate;
 
-        public QuickGameBoundaryTransition(King player, QuickGameScene scene) : base(player, scene)
+        public QuickGameBoundaryTransition(QuickGameScene scene) : base(scene)
         {
             MasterTemplate = scene.MasterTemplate;
         }
 
-        protected override SceneID GetNextMap(BorderSide exitSide, King player)
+        protected override SceneID GetNextMap(IMovesBetweenScenes actor, BorderSide exitSide)
         {
-            var playerPosition = player.Position.Center;
+            var position = actor.Position.Center;
 
             switch(exitSide)
             {
                 case BorderSide.Right:
-                    playerPosition.X = (float)(Scene.Position.Right + player.Position.Width*4);
+                    position.X = (float)(Scene.Position.Right + actor.Position.Width*4);
                     break;
                 case BorderSide.Left:
-                    playerPosition.X = (float)(Scene.Position.Left - player.Position.Width * 4);
+                    position.X = (float)(Scene.Position.Left - actor.Position.Width * 4);
                     break;
                 case BorderSide.Top:
-                    playerPosition.Y = (float)(Scene.Position.Top - player.Position.Height * 4);
+                    position.Y = (float)(Scene.Position.Top - actor.Position.Height * 4);
                     break;
                 case BorderSide.Bottom:
-                    playerPosition.Y = (float)(Scene.Position.Bottom + player.Position.Height * 4);
+                    position.Y = (float)(Scene.Position.Bottom + actor.Position.Height * 4);
                     break;
             }
 
-            playerPosition = MasterTemplate.PositionInMapToPointInTemplate(CurrentMap, playerPosition);
+            position = MasterTemplate.PositionInMapToPointInTemplate(CurrentMap, position);
 
-            var nextMapIndex = MasterTemplate.MapRegions.FindIndex(p => p.Contains(playerPosition));
+            var nextMapIndex = MasterTemplate.MapRegions.FindIndex(p => p.Contains(position));
             if (nextMapIndex == -1)
                 throw new ArgumentException("Unable to find adjacent map");
 

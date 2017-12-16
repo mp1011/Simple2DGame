@@ -129,6 +129,23 @@ namespace GameEngine
             return GetTilesHit(collidingObjectPosition).FirstOrDefault(p => p.IsSolid);
         }
 
+        public IEnumerable<Tile> GetTilesInLine(Vector2 pt1, Vector2 pt2)
+        {
+            var scale = new Vector2(1.0f / this.Tiles.Texture.CellSize.X, 1.0f / this.Tiles.Texture.CellSize.Y);
+         
+            var pt = pt1;
+
+            while (pt.X != pt2.X && pt.Y != pt2.Y)
+            {
+                var tile = GetTileFromGridPoint(pt.Scale(scale));
+                yield return tile;
+
+                pt = new Vector2(pt.X.Approach(pt2.X, Tiles.Texture.CellSize.X),
+                    pt.Y.Approach(pt2.Y, Tiles.Texture.CellSize.Y));
+            }
+
+        }
+
         public IEnumerable<Tile> GetTilesHit(Rectangle collidingObjectPosition)
         {
             var scale = new Vector2(1.0f / this.Tiles.Texture.CellSize.X, 1.0f / this.Tiles.Texture.CellSize.Y);

@@ -17,7 +17,8 @@ namespace GameEngine
             set
             {
                 _mps = value;
-                applied = false;
+                if(_mps != value)
+                    applied = false;
             }
         }
         

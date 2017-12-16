@@ -29,7 +29,7 @@ namespace QuickGame1
 
         protected override IEnumerable<SceneTransition> LoadTransitions()
         {
-            yield return new SceneTransition(Scenes.Map, new AnyButtonPressedCondition(Input.GetInput(this)));                
+            yield return new ConditionTransition(new AnyButtonPressedCondition(Input.GetInput(this)), Scenes.Map);                
         }
     }
 }

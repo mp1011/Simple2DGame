@@ -1,10 +1,13 @@
 ﻿using GameEngine;
+using System;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace QuickGame1
 {
-    class Shrapnel : MovingActor
+    class Shrapnel : MovingActor, IWithGravity
     {
+        public ManualCondition GravityOn { get; } = new ManualCondition(true);
+
         private Shrapnel(TextureInfo texture) : base(QuickGameScene.Current, texture)
         {            
             Animations.Add(AnimationKeys.Stand, this, TextureFlipBehavior.FlipWhenFacingRight, 0);
@@ -37,10 +40,10 @@ namespace QuickGame1
             br.Direction = Direction.Right;
 
             int speed = 60;
-            ul.MoveInDirection(new Vector2(-1f, -1f), speed);
-            ur.MoveInDirection(new Vector2(1f, -1f), speed);
-            bl.MoveInDirection(new Vector2(-1f, 0f), speed);
-            br.MoveInDirection(new Vector2(1f, 0f), speed);
+            ul.Motion.AdjustImmediately(new DirectedMotion { AngleInDegrees = 45, DistancePerSecond = 60 });
+            ur.Motion.AdjustImmediately(new DirectedMotion { AngleInDegrees = 45+90, DistancePerSecond = 60 });
+            bl.Motion.AdjustImmediately(new DirectedMotion { AngleInDegrees = 45+180, DistancePerSecond = 60 });
+            br.Motion.AdjustImmediately(new DirectedMotion { AngleInDegrees = 45+270, DistancePerSecond = 60 });
         }
     }
 }

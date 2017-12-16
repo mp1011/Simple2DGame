@@ -30,6 +30,11 @@ namespace QuickGame1
             var groups = AdjacentTileGroup<MovingBlockPiece>.ExtractGroups(allPieces);
             var paths = AdjacentTileGroup<PathPoint>.ExtractGroups(pathPoints);
 
+            //don't like this here
+            scene.SinglePathPoints = paths.Where(p => p.Tiles.Length == 1).Select(p => p.Tiles[0]).ToArray();
+            
+            paths = paths.Where(p => p.Tiles.Length > 1).ToArray();
+
             foreach (var group in groups)
             {
                 var groupBox = group.GetBoundingBox();

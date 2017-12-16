@@ -21,6 +21,12 @@ namespace GameEngine
     public static class Config
     {
         public static IConfigurationProvider Provider;
+
+        public static T ReadValue<T>(string key)
+        {
+            var cv = new ConfigValue<T>(key);
+            return cv.Value;
+        }
     }
 
     public class StringConfigProvider : IConfigurationProvider
@@ -162,16 +168,16 @@ namespace GameEngine
                 var w = StringToObject<float>(stringValue[2]);
                 var h = StringToObject<float>(stringValue[3]);
                 ret = new Rectangle(x, y, w, h);
-            }
-            else if(typeof(T) == typeof(AxisMotionConfig))
+            } 
+            else if (typeof(T) == typeof(AxisMotionConfig))
             {
                 var values = StringToDictionary(stringValue);
                 var cfg = new AxisMotionConfig();
 
                 cfg.StartSpeed = values.TryGet("start", "0").ParseFloat();
                 cfg.TargetSpeed = values.TryGet("target", "0").ParseFloat();
-                cfg.Change = new ScaledFloat(values.TryGet("delta", "0").ParseFloat(),1f);
-                cfg.Axis = StringToObject(values.TryGet("axis")??"", Axis.X);
+                cfg.Change = new ScaledFloat(values.TryGet("delta", "0").ParseFloat(), 1f);
+                cfg.Axis = StringToObject(values.TryGet("axis") ?? "", Axis.X);
                 cfg.Vary = values.TryGet("vary", "0").ParseFloat();
 
                 bool flipLeft = values.TryGet("flip left", "false").ParseBool();
@@ -182,6 +188,14 @@ namespace GameEngine
                 else if (flipUp)
                     cfg.FlipWhen = Direction.Up;
 
+                ret = cfg;
+            }
+            else if (typeof(T) == typeof(XYMotionConfig))
+            {
+                var cfg = new XYMotionConfig();
+                cfg.MotionPerSecond = new Vector2(stringValue[0].ParseFloat(), stringValue[1].ParseFloat());
+                if (stringValue.Any(p => p == "flip left"))
+                    cfg.FlipXWhen = Direction.Left;
                 ret = cfg;
             }
             else if(typeof(T).IsArray)

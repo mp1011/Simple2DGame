@@ -15,9 +15,8 @@ namespace QuickGame1
         public IMovingBlock RidingBlock { get; set; }
         public DamageHandler DamageHandler { get; private set; }
         DamageType IDamageable.TakesDamageFrom => DamageType.PlayerAttack | DamageType.Trap;
-
+        public ManualCondition GravityOn { get; } = new ManualCondition(true);
         DamageType IDamager.DamageType => DamageType.Enemy;
-
         CellType IEditorPlaceable.EditorType => CellType.Grapeman;
 
         public Grapeman() : base(QuickGameScene.Current, Textures.GrapemanTexture)

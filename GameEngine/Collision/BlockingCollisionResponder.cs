@@ -80,8 +80,12 @@ namespace GameEngine
             if (tryPosition.Center.X != moveableObject.Position.Center.X)
                 moveableObject.Motion.Stop(Axis.X);
 
-            if (tryPosition.Center.Y != moveableObject.Position.Center.Y)
+            if (tryPosition.Center.Y < moveableObject.Position.Center.Y && moveableObject.Motion.CurrentMotionPerSecond.Y > 0)
                 moveableObject.Motion.Stop(Axis.Y);
+
+            if (tryPosition.Center.Y > moveableObject.Position.Center.Y && moveableObject.Motion.CurrentMotionPerSecond.Y < 0)
+                moveableObject.Motion.Stop(Axis.Y);
+
         }
 
         private static void TryCorrectPosition(Rectangle tryPosition, TFirst moveableObject, ICollidable collidable, IMovingCollidable movingCollidable, bool correctX, bool correctY, bool correctPastOriginal=false)

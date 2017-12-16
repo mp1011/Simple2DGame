@@ -16,7 +16,8 @@ namespace QuickGame1
         Coin,
         Snake,
         Grapeman,
-        Slime
+        Slime,
+        Elf
     }
       
     interface IEditorPlaceable : IWithPosition, IRemoveable
@@ -70,6 +71,8 @@ namespace QuickGame1
                 newItem = new Grapeman();
             else if (type == CellType.Slime)
                 newItem = new Slime();
+            else if (type == CellType.Elf)
+                newItem = new Elf();
             else
                 throw new NotImplementedException();
 

@@ -80,6 +80,11 @@ namespace GameEngine
         public bool Active { get; set; }
 
         public override bool IsActive => Active;
+
+        public ManualCondition(bool active=false)
+        {
+            Active = active;
+        }
     }
 
     public class NegativeCondition : Condition

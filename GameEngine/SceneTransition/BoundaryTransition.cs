@@ -6,28 +6,25 @@ using System.Threading.Tasks;
 
 namespace GameEngine
 {
-    public abstract class BoundaryTransition<TPlayer> : SceneTransition
-        where TPlayer:class, IMovingWorldObject
+    public abstract class BoundaryTransition : SceneTransition     
     {
-        private TPlayer Player;
         protected Scene Scene { get; private set; }
-
         protected SceneID CurrentMap => Scene.ID;
-        
-        public override SceneID NextMap
+        private Boundary ExitBounds;
+
+        public override SceneID GetNextMap(IMovesBetweenScenes actor)
         {
-            get
-            {
-                var exitSide = Scene.Boundary.GetExitingSide(Player.Position);
-                return GetNextMap(exitSide, Player);               
-            }
+            var exitSide = Scene.Boundary.GetExitedSide(actor.Position);
+            if (exitSide != BorderSide.None)
+                return GetNextMap(actor, exitSide);
+            else
+                return null;
         }
 
-        protected abstract SceneID GetNextMap(BorderSide exitSide, TPlayer player);
+        protected abstract SceneID GetNextMap(IMovesBetweenScenes actor, BorderSide exitSide);
 
-        public BoundaryTransition(TPlayer player, Scene scene) : base(new CollisionCondition<TPlayer, Boundary>(player))
+        public BoundaryTransition(Scene scene) 
         {
-            Player = player;
             Scene = scene;
         }
     }

@@ -17,7 +17,7 @@ namespace QuickGame1
 
             this.AddGravity();
         }
-
+        public ManualCondition GravityOn { get; } = new ManualCondition(true);
         private ManualCondition isUnderwater = new ManualCondition();
         public ManualCondition IsUnderWater => isUnderwater;
         public ManualCondition IsOnGround { get; set; } = new ManualCondition();

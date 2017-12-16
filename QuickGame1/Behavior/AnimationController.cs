@@ -44,7 +44,7 @@ namespace QuickGame1
 
             if(IsOnLadder.IsActiveAndNotNull())
             {
-                if (Actor.Motion.MotionPerSecond.Y == 0)
+                if (Actor.Motion.CurrentMotionPerSecond.Y == 0)
                     Actor.Animations.CurrentKey = AnimationKeys.ClimbStop;
                 else
                     Actor.Animations.CurrentKey = AnimationKeys.Climb;
@@ -60,7 +60,7 @@ namespace QuickGame1
 
             if(Actor.IsOnGround.Active)
             {
-                if (Actor.Motion.MotionPerSecond.X == 0)
+                if (Actor.Motion.CurrentMotionPerSecond.X == 0)
                     Actor.Animations.CurrentKey = AnimationKeys.Stand;
                 else
                     Actor.Animations.CurrentKey = AnimationKeys.Walk;
@@ -68,7 +68,7 @@ namespace QuickGame1
             }
             else
             {
-                if (Actor.Motion.MotionPerSecond.Y < 0)
+                if (Actor.Motion.CurrentMotionPerSecond.Y < 0)
                     Actor.Animations.CurrentKey = AnimationKeys.Jump;
                 else
                     Actor.Animations.CurrentKey = AnimationKeys.Fall;

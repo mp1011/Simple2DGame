@@ -11,6 +11,7 @@ namespace QuickGame1
     {
         public ShopMenu ShopMenu { get; set; }
         public IMovingBlock RidingBlock { get; set; }
+        public ManualCondition GravityOn { get; } = new ManualCondition(true);
         public Sign() : base(QuickGameScene.Current, Textures.RockTiles)
         {
             Position.Set(0, 0, 16, 16);

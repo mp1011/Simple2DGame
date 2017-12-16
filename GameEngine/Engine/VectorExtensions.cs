@@ -27,6 +27,18 @@ namespace GameEngine
             return ret;
         }
 
+        public static Vector2 DegreesToVector(this float degrees, float length)
+        {
+            var ret = RadToXY(degrees * (Math.PI / 180.0), length);
+            return ret;
+        }
+
+        public static Vector2 DegreesToVector(this double degrees, float length)
+        {
+            var ret = RadToXY(degrees * (Math.PI / 180.0), length);
+            return ret;
+        }
+
         public static Vector2 SetDegrees(this Vector2 v, double degrees)
         {          
             var distance = v.Length();

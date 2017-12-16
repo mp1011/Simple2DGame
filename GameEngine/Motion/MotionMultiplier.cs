@@ -18,6 +18,23 @@ namespace GameEngine
             TargetMod = new ConfigValue<float>(name + " target mod");
         }
 
+        public InterpolatedVector Apply(InterpolatedVector v)
+        {
+            if (Condition.IsActive)
+            {
+                var ret = new InterpolatedVector();
+                ret.X.Current = v.X.Current;
+                ret.X.SetTarget(v.X.Target * TargetMod.Value, v.X.ChangePerSecond * DeltaMod.Value);
+
+                ret.Y.Current = v.Y.Current;
+                ret.Y.SetTarget(v.Y.Target * TargetMod.Value, v.Y.ChangePerSecond * DeltaMod.Value);
+                
+                return ret;
+            }
+            else
+                return v;
+        }
+
         public float GetDeltaMod()
         {
             if (Condition.IsActive)

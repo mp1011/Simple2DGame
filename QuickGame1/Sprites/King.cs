@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace QuickGame1
 {
-    class King : MovingActor, ICanClimb, IDamageable, ICanGetPrizes
+    class King : MovingActor, ICanClimb, IDamageable, ICanGetPrizes, IMovesBetweenScenes
     {
         public bool RecoilsWhenHit { get; set; } = true;
 
@@ -16,7 +16,7 @@ namespace QuickGame1
         public ManualCondition IsOnGround { get; set; } = new ManualCondition();
         public IMovingBlock RidingBlock { get; set; }
         public ManualCondition IsOnLadder { get; set; } = new ManualCondition();
-   
+        public ManualCondition GravityOn { get; } = new ManualCondition(true);
         public int Score { get; set; }
         public int Coins { get; set; }
 
@@ -51,7 +51,16 @@ namespace QuickGame1
             Animations.Add(AnimationKeys.ClimbStop, this, TextureFlipBehavior.FlipWhenFacingLeft, 18);
            
             new MovingPlatformPositionAdjuster<King>(this);
-            WaterHelper.AddWaterPhysics(this);           
+            WaterHelper.AddWaterPhysics(this);
+
+            Scene.InterSceneActors.Add(this);
+        }
+
+        SceneID IMovesBetweenScenes.NextScene { get; set; }
+
+        void IMovesBetweenScenes.HandleTransition(Scene current, SceneID next)
+        {
+            Engine.Instance.Scene =  Engine.Instance.SceneLoader.LoadScene(next);
         }
     }
 

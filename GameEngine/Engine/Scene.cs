@@ -26,6 +26,8 @@ namespace GameEngine
 
         public Boundary Boundary { get; private set; }
 
+        public List<IMovesBetweenScenes> InterSceneActors = new List<IMovesBetweenScenes>();
+
         protected void Load()
         {
             Layers = LoadLayers().ToArray();
@@ -59,16 +61,31 @@ namespace GameEngine
         protected abstract void LoadSceneContent();
         protected abstract IEnumerable<SceneTransition> LoadTransitions();
         
-        public SceneTransition CheckTransitions()
+        public void CheckTransitions()
         {
             foreach(var transition in transitions)
             {
-                if(transition.ExitCondition.IsActiveAndNotNull())
-                    return transition;
+                if (transition.RequiresActor)
+                {
+                    foreach (var actor in InterSceneActors.Where(p=>p.NextScene == null))
+                    {
+                        var transitionScene = transition.GetNextMap(actor);
+                        if (transitionScene != null)
+                        {
+                            actor.NextScene = transitionScene;
+                            actor.HandleTransition(this, transitionScene);
+                        }
+                    }
+                }
+                else
+                {
+                    var nextScene = transition.GetNextMap(null);
+                    if (nextScene != null)
+                        Engine.Instance.Scene = Engine.Instance.SceneLoader.LoadScene(nextScene);
+                }
             }
-
-            return null;
         }
+
         public void AddObject(IUpdateable updatable)
         {
             var group = UpdateGroups.FirstOrDefault(p => p.Priority == updatable.Priority);

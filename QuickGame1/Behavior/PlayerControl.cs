@@ -15,12 +15,11 @@ namespace QuickGame1
         private IGameInputWithDPad Input;
         private King Player;
         IRemoveable GameEngine.IUpdateable.Root => Player;
-        private AxisMotion walk;
-        private AxisMotion climb;
-        private AxisMotion brake, climbBrake;
 
-        private ConfigValue<AxisMotionConfig> JumpConfig = new ConfigValue<AxisMotionConfig>("jump");
-
+        private MotionWithBrake WalkMotion;
+        private MotionWithBrake ClimbMotion;
+        private AxisMotion JumpMotion;
+        
         private ICondition hasLandedOnGround;
         private ICondition isAttacking;
         private float highestPointAboveGround = float.MaxValue;
@@ -30,14 +29,21 @@ namespace QuickGame1
             Input = input;
             Player = player;
             Player.Scene.AddObject(this);
-            walk = new AxisMotion("walk", Player).Set(flipWhen: Direction.Left);
-            climb = new AxisMotion("climb", Player).Set(flipWhen: Direction.Up);
-            climbBrake = new AxisMotion("climb brake", Player);
-            brake = new AxisMotion("brake", Player);
-            walk.Active = false;
-            brake.Active = false;
-            climb.Active = false;
-            climbBrake.Active = false;
+
+            var walk = new AxisMotion(target: Config.ReadValue<AxisMotionConfig>("walk"));
+            var brake = new AxisMotion(target: Config.ReadValue<AxisMotionConfig>("brake"));
+
+            var climb = new AxisMotion(target: Config.ReadValue<AxisMotionConfig>("climb"));
+            var climbBrake = new AxisMotion(target: Config.ReadValue<AxisMotionConfig>("climb brake"));
+
+            WalkMotion = new MotionWithBrake(walk, brake);
+            player.Motion.AddAdjuster(WalkMotion);
+            ClimbMotion = new MotionWithBrake(climb, climbBrake);
+            player.Motion.AddAdjuster(ClimbMotion);
+                       
+            JumpMotion = new AxisMotion(Config.ReadValue<AxisMotionConfig>("jump"));
+
+            player.Motion.AddAdjuster(JumpMotion);
 
             hasLandedOnGround = new CollisionCondition<IPlatformerObject, TileMap>(player)
                 .When(player.IsOnGround)
@@ -47,55 +53,42 @@ namespace QuickGame1
                 .ContinueWhileAnimationPlaying(player.Animations, AnimationKeys.Attack);
 
             new AnimationController<King>(Player, isAttacking, hasLandedOnGround);
+
+            Player.Direction = Direction.Right;
         }
 
 
         public void Update(TimeSpan elapsedInFrame)
         {
-            if (Player.Motion.MotionPerSecond.Y == 0 && Input.GetButtonPressed(GameKeys.Jump))
-                Player.Jump(JumpConfig);
-
-
+            JumpMotion.Active = Player.Motion.CurrentMotionPerSecond.Y == 0 && Input.GetButtonPressed(GameKeys.Jump);
+                 
             Player.Direction = Input.Pad.GetInputDirection(Player.Direction, Axis.X);
 
-            var isWalking = Input.Pad.GetInputAmount(Axis.X) != 0;
-
-            if (Player.Motion.MotionPerSecond.Y == 0 && isAttacking.IsActive)
+            bool isWalking = Input.Pad.GetInputAmount(Axis.X) != 0;
+            if (Player.Motion.CurrentMotionPerSecond.Y == 0 && isAttacking.IsActive)
                 isWalking = false;
 
-            if(Player.IsOnLadder.Active)
-            {                 
-                brake.Active = true;
-              
+            WalkMotion.Motion.Active = isWalking;
+
+            if (Player.IsOnLadder.Active)
+            {
                 if (Player.Direction.Axis() == Axis.X)
                     Player.Direction = Direction.Up;
 
                 Player.Direction = Input.Pad.GetInputDirection(Direction.Up, Axis.Y);
 
-                climb.Active = Input.Pad.GetInputAmount(Axis.Y) != 0;
-                climbBrake.Active = !climb.Active;                 
-            }
-            else if (isWalking)
-            {
-                climb.Active = false;
-                climbBrake.Active = false;
-                brake.Active = false;
-                walk.Active = true;
+                ClimbMotion.Active = true;
+                ClimbMotion.Motion.Active = Input.Pad.GetInputAmount(Axis.Y) != 0;
             }
             else
-            {                
-                climb.Active = false;
-                climbBrake.Active = false;
-                brake.Active = true;
-                walk.Active = false;
-            }
+                ClimbMotion.Active = false;
 
-            if(!Player.IsOnGround.Active)
+            if (!Player.IsOnGround.Active)
             {
                 highestPointAboveGround = (float)Math.Min(highestPointAboveGround, Player.Position.Bottom);
             }
-            
-            if(hasLandedOnGround.WasJustActivated())
+
+            if (hasLandedOnGround.WasJustActivated())
             {
                 float maxSoundDistance = 64;
                 var distanceFallen = ((float)Player.Position.Bottom - highestPointAboveGround).KeepInsideRange(0, maxSoundDistance);
@@ -107,7 +100,7 @@ namespace QuickGame1
                 highestPointAboveGround = Int32.MaxValue;
             }
 
-            if(isAttacking.WasJustActivated())
+            if (isAttacking.WasJustActivated())
             {
                 AudioEngine.Instance.PlaySound(Sounds.Swish);
                 var attack = new Swoosh();

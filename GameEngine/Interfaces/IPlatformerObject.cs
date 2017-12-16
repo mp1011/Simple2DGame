@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace GameEngine
 {
-    public interface IPlatformerObject : IMovingWorldObject
+    public interface IPlatformerObject : IMovingWorldObject, IWithGravity
     {
         IMovingBlock RidingBlock { get; set; }
         ManualCondition IsUnderWater { get; }
         ManualCondition IsOnGround { get; }
+        ManualCondition GravityOn { get; }
     }
 
     public static class PlatformerObjectExtensions

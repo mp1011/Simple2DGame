@@ -36,9 +36,8 @@ namespace QuickGame1
         private ICondition throwFireballCondition = Condition.False;
         private ICondition attackDurationCondition = Condition.False;
 
-        private NearbyTileChecker TileChecker;
-        private AxisMotion JumpForwardMotion;
-
+        private QuickGameNearbyTileChecker TileChecker;
+       
         public EnemyBehavior(TEnemy actor, EnemyBehaviorFlags flags)
         {
             Actor = actor;
@@ -46,7 +45,7 @@ namespace QuickGame1
 
             Flags = flags;
 
-            TileChecker = new NearbyTileChecker(actor, actor.Scene.TileMap);
+            TileChecker = new QuickGameNearbyTileChecker(actor, actor.Scene.TileMap);
         }
 
         void AddBehaviorsBasedOnFlags()
@@ -74,19 +73,20 @@ namespace QuickGame1
             {
                 Actor.Direction = Direction.Left;
             }
-            
-            if(Flags.HasFlag(EnemyBehaviorFlags.MovesFast))
-            {
-                Actor.Motion.Forces.Add(new GroundMotion<TEnemy>("fast motion", Actor));
-            }
-            else if(Flags.HasFlag(EnemyBehaviorFlags.MovesMore))
-            {
-                Actor.Motion.Forces.Add(new GroundMotion<TEnemy>("medium motion", Actor));
-            }
-            else if(Flags.HasFlag(EnemyBehaviorFlags.Moves))
-            {
-                Actor.Motion.Forces.Add(new GroundMotion<TEnemy>("slow motion", Actor));
-            }
+
+            throw new NotImplementedException();
+            //if(Flags.HasFlag(EnemyBehaviorFlags.MovesFast))
+            //{
+            //    Actor.Motion.Forces.Add(new GroundMotion<TEnemy>("fast motion", Actor));
+            //}
+            //else if(Flags.HasFlag(EnemyBehaviorFlags.MovesMore))
+            //{
+            //    Actor.Motion.Forces.Add(new GroundMotion<TEnemy>("medium motion", Actor));
+            //}
+            //else if(Flags.HasFlag(EnemyBehaviorFlags.Moves))
+            //{
+            //    Actor.Motion.Forces.Add(new GroundMotion<TEnemy>("slow motion", Actor));
+            //}
 
             if (Flags.HasFlag(EnemyBehaviorFlags.HasGravity))
             {
@@ -104,34 +104,25 @@ namespace QuickGame1
 
                 if(Flags.HasFlag(EnemyBehaviorFlags.CanJump))
                 {
-                    var jumpMotion = new AxisMotion("enemy jump", Actor).Set(deactivateAfterStart: true);
-                    JumpForwardMotion = new AxisMotion("enemy jump X", Actor).Set(flipWhen: Direction.Left, deactivateWhenTargetReached:false);
+                    throw new NotImplementedException();
+                    //var jumpMotion = new AxisMotion("enemy jump", Actor).Set(deactivateAfterStart: true);
+                    //JumpForwardMotion = new AxisMotion("enemy jump X", Actor).Set(flipWhen: Direction.Left, deactivateWhenTargetReached:false);
 
-                    Actor.Motion.Forces.Add(jumpMotion);
+                    //Actor.Motion.Forces.Add(jumpMotion);
 
-                    new LambdaAction<Actor>(Actor, UpdatePriority.Behavior, Actor.Scene, TileChecker.IsAtWall.Or(TileChecker.IsOnLedge),
-                       (a, t) =>
-                       {
-                           if (TileChecker.IsAtWall.IsActive ||
-                                Flags.HasFlag(EnemyBehaviorFlags.FallsOfLedges) && TileChecker.IsAtLedgeToSpikePit.IsActive)
-                           {
-                               jumpMotion.Active = true;
-                               JumpForwardMotion.Active = true;
-                           }
-                       });
+                    //new LambdaAction<Actor>(Actor, UpdatePriority.Behavior, Actor.Scene, TileChecker.IsAtWall.Or(TileChecker.IsOnLedge),
+                    //   (a, t) =>
+                    //   {
+                    //       if (TileChecker.IsAtWall.IsActive ||
+                    //            Flags.HasFlag(EnemyBehaviorFlags.FallsOfLedges) && TileChecker.IsOnDangerousLedge.IsActive)
+                    //       {
+                    //           jumpMotion.Active = true;
+                    //           JumpForwardMotion.Active = true;
+                    //       }
+                    //   });
                 }
             }
-            else
-            {
-
-
-            }
-
-            foreach (var f in Actor.Motion.Forces.OfType<AxisMotion>())
-            {
-                if(f.Axis == Axis.X)
-                    f.Active = true;
-            }
+           
         }
 
         void IUpdateable.Update(TimeSpan elapsedInFrame)
@@ -143,15 +134,17 @@ namespace QuickGame1
                 AddBehaviorsBasedOnFlags();
             }
 
-            if(Actor.IsOnGround.Active)
-            {
-                if(JumpForwardMotion != null)
-                    JumpForwardMotion.Active = false;
-            }
+            throw new NotImplementedException();
+            //if(Actor.IsOnGround.Active)
+            //{
+            //    if(JumpForward != null)
+            //        JumpForwardMotion.Active = false;
+            //}
 
             if(attackDurationCondition.IsActive)
             {
-                Actor.Motion.Stop(Axis.X);
+                throw new NotImplementedException();
+               // Actor.Motion.Stop(Axis.X);
             }
 
             if(throwFireballCondition.IsActiveAndNotNull())

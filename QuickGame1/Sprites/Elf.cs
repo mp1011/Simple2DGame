@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 
 namespace QuickGame1
 {
-    class Elf : MovingActor, IPlatformerObject, IShop
+    class Elf : MovingActor, IPlatformerObject, IShop, IEditorPlaceable, IMovesBetweenScenes
     {
         public ShopMenu ShopMenu { get; set; }
         private ManualCondition isUnderwater = new ManualCondition();
         public ManualCondition IsUnderWater => isUnderwater;
         public IMovingBlock RidingBlock { get; set; }
         public ManualCondition IsOnGround { get; set; } = new ManualCondition();
+        public ManualCondition GravityOn { get; } = new ManualCondition(true);
+        CellType IEditorPlaceable.EditorType => CellType.Elf;
 
         public Elf() : base(QuickGameScene.Current, Textures.ElfTexture)
         {
@@ -29,9 +31,19 @@ namespace QuickGame1
             Animations.Add(AnimationKeys.Land, this, TextureFlipBehavior.FlipWhenFacingLeft, 7);
             Animations.Add(AnimationKeys.Attack, this, TextureFlipBehavior.FlipWhenFacingLeft, 10,11,12);
 
+            new AnimationController<Elf>(this, Condition.False, Condition.False);
             WaterHelper.AddWaterPhysics(this);
 
-            new ElfController(this);
+            //  new ElfController(this);
+            new PlatformerPathFollowerBehavior(this, Scene.SinglePathPoints, new QuickGameNearbyTileChecker(this, Scene.TileMap), Scene.TileMap);
+            Scene.InterSceneActors.Add(this);
+        }
+
+        SceneID IMovesBetweenScenes.NextScene { get; set; }
+
+        void IMovesBetweenScenes.HandleTransition(Scene current, SceneID next)
+        {
+            Remove();
         }
     }
 

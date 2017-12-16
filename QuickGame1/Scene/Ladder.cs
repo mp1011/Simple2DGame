@@ -33,9 +33,8 @@ namespace QuickGame1
         private static void BeginClimb(ICanClimb actor)
         {
             actor.IsOnLadder.Active = true;
-            var gravity = actor.Motion.GetMotionByName<AxisMotion>("gravity").Require();
-            gravity.Active = false;
-            actor.Motion.Stop(Axis.Y);
+            actor.GravityOn.Active = false;
+            actor.Motion.Stop(Axis.Y, setTarget:true);
         }
 
         public static void EndClimb(ICanClimb actor)
@@ -43,8 +42,7 @@ namespace QuickGame1
             if (actor.IsOnLadder.Active)
             {
                 actor.IsOnLadder.Active = false;
-                var gravity = actor.Motion.GetMotionByName<AxisMotion>("gravity").Require();
-                gravity.Active = true;
+                actor.GravityOn.Active = true;
             }
         }
     }

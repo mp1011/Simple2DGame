@@ -23,8 +23,8 @@ namespace QuickGame1
         
         void IUpdateable.Update(TimeSpan elapsedInFrame)
         {
-            if (Actor.RidingBlock != null)  
-                Actor.Motion.CorrectPosition(Actor.RidingBlock.FrameMotion());
+            if (Actor.RidingBlock != null)
+                Actor.Motion.CorrectPosition(Actor.RidingBlock.Motion.FrameVelocity);
         }
     }
 }

@@ -22,10 +22,10 @@ namespace QuickGame1
             OnCollisionBetween<IPlatformerObject, Spring>()
                 .Then((p, s) =>
                 {
-                    var ySpeed = p.Motion.MotionPerSecond.Y;
+                    var ySpeed = p.Motion.CurrentMotionPerSecond.Y;
                     if(ySpeed > 20)
                     {
-                        p.MoveInDirection(Direction.Up, (int)(ySpeed * 1.2));
+                        p.Jump(ySpeed * 1.6f);
                     }
 
                 });
@@ -37,10 +37,8 @@ namespace QuickGame1
                     var landingSpeed = collisionInfo.OriginalVelocity.Y;
                     if (landingSpeed > 20)
                     {
-                        var bounceSpeed = -0.7f * landingSpeed;
-
-                        var bouncingMotion = bouncingThing.GetBounceMotion();
-                        bouncingMotion.SetStartSpeed(bounceSpeed);
+                        var bounceSpeed = 0.7f * landingSpeed;
+                        bouncingThing.Jump(bounceSpeed);
                     }
                 });
 
@@ -105,7 +103,6 @@ namespace QuickGame1
 
             OnCollisionBetween<ITileBreaker, QuickGameTileMap>()
                 .Then((actor, map) => TileBreakerHandler.CheckForBrokenTiles(actor, map));
-
         }
 
         private void AddObjectCollisions()
@@ -114,7 +111,7 @@ namespace QuickGame1
             OnCollisionBetween<King, IShop>()                
                 .Then((king, shop) =>
                 {
-                    shop.ShopMenu.CheckEnterShop();
+                    //shop.ShopMenu.CheckEnterShop();
                 });
 
             OnCollisionBetween<ICanGetPrizes, IPrize>()
@@ -142,9 +139,10 @@ namespace QuickGame1
             OnCollisionBetween<Swoosh, Box>()
                 .Then((s, box) =>
                 {
-                    box.Direction = box.DirectionAwayFrom(s, Axis.X);
-                    box.PushInDirection(box.Direction, new ConfigValue<AxisMotionConfig>("box push"));
-                    box.Jump(new ConfigValue<AxisMotionConfig>("box jump"));
+                    throw new NotImplementedException();
+                    //box.Direction = box.DirectionAwayFrom(s, Axis.X);
+                    //box.PushInDirection(box.Direction, new ConfigValue<AxisMotionConfig>("box push"));
+                    //box.Jump(new ConfigValue<AxisMotionConfig>("box jump"));
                 });
              
         }

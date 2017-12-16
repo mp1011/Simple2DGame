@@ -26,8 +26,9 @@ namespace QuickGame1
         private MovingActor Fairy;
         private MovingActor Player;
         private ICondition followPlayer;
-        private XYMotion motion;
         private ConfigValue<float> FairySpeed = new ConfigValue<float>("fairy speed");
+
+        private DirectedMotion FairyMotion;
 
         UpdatePriority IUpdateable.Priority => UpdatePriority.Behavior;
 
@@ -40,24 +41,25 @@ namespace QuickGame1
             fairy.Scene.AddObject(this);
 
             followPlayer = new OnceEvery(new Timer(TimeSpan.FromSeconds(1), Fairy));
-            motion = new XYMotion("fairy", Fairy);            
+
+            FairyMotion = new DirectedMotion();
+            Fairy.Motion.AddAdjuster(FairyMotion);
         }
 
         void IUpdateable.Update(TimeSpan elapsedInFrame)
         {
-           
             var targetAngle = Fairy.Position.Center.GetDegreesTo(Player.Position.Center);
-            motion.AngleInDegrees = motion.AngleInDegrees.RotateAngleInDegreesTowards(targetAngle, 1);
-            motion.DistancePerSecond = FairySpeed.Value;
-         
+            
+            FairyMotion.AngleInDegrees = FairyMotion.AngleInDegrees.RotateAngleInDegreesTowards(targetAngle, 1);
+          
             var distance = Fairy.Position.Center.GetAbsoluteDistanceTo(Player.Position.Center);
-            if(distance > 50)
+            if (distance > 50)
             {
-                motion.DistancePerSecond = FairySpeed.Value * 3;
+                FairyMotion.DistancePerSecond = FairySpeed.Value * 3;
             }
             else
             {
-                motion.DistancePerSecond = FairySpeed.Value;
+                FairyMotion.DistancePerSecond = FairySpeed.Value;
             }
         }
     }

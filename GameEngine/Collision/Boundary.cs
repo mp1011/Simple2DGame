@@ -34,6 +34,23 @@ namespace GameEngine
             return GetExitingSide(movingObject, 0, 0);
         }
 
+        public BorderSide GetExitedSide(Rectangle movingObject)
+        {
+            if (movingObject.Left > Area.Position.Right)
+                return BorderSide.Right;
+
+            if (movingObject.Top > Area.Position.Bottom)
+                return BorderSide.Bottom;
+
+            if (movingObject.Right < Area.Position.Left)
+                return BorderSide.Left;
+
+            if (movingObject.Bottom < Area.Position.Top)
+                return BorderSide.Top;
+
+            return BorderSide.None;
+        }
+
         public BorderSide GetExitingSide(Rectangle movingObject, double xThreshold, double yThreshold)
         {
             if (movingObject.Right > Area.Position.Right + xThreshold)

@@ -14,6 +14,7 @@ namespace QuickGame1
         public ManualCondition IsOnGround { get; set; } = new ManualCondition();
         public IMovingBlock RidingBlock { get; set; }
         public DamageHandler DamageHandler { get; private set; }
+        public ManualCondition GravityOn { get; } = new ManualCondition(true);
         DamageType IDamageable.TakesDamageFrom => DamageType.PlayerAttack | DamageType.Trap;
 
         DamageType IDamager.DamageType => DamageType.Enemy;

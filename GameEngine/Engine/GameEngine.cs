@@ -82,12 +82,7 @@ namespace GameEngine
                 }
             }
 
-
-            var transition = Scene.CheckTransitions();
-            if (transition != null)
-            {
-                Scene = SceneLoader.LoadScene(transition.NextMap);
-            }
+            Scene.CheckTransitions();
         }
 
         public void DrawFrame()

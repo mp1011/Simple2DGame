@@ -12,10 +12,7 @@ namespace QuickGame1
     class MovingActor : Actor, IMovingWorldObject<QuickGameScene>
     {
         public MotionManager Motion { get; private set; }
-
-        List<IMotionAdjuster> _forces = new List<IMotionAdjuster>();
-        public List<IMotionAdjuster> Forces { get { return _forces; } }
-
+        
         public MovingActor(QuickGameScene scene, TextureInfo texture) : base(scene, texture)
         {
             Motion = new MotionManager(this);

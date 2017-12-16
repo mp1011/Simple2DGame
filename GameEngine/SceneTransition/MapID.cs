@@ -24,5 +24,16 @@ namespace GameEngine
             else
                 return Name;
         }
+
+        public override bool Equals(object obj)
+        {
+            SceneID other = obj as SceneID;
+            return other != null && other.MapNumber == MapNumber && other.Name.Equals(Name);
+        }
+
+        public override int GetHashCode()
+        {
+            return Name.Length * MapNumber;
+        }
     }
 }

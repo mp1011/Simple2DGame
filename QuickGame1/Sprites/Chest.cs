@@ -23,7 +23,7 @@ namespace QuickGame1
         }
         private ManualCondition isUnderwater = new ManualCondition();
         public ManualCondition IsUnderWater => isUnderwater;
-
+        public ManualCondition GravityOn { get; } = new ManualCondition(true);
         public ManualCondition IsOnGround { get; set; } = new ManualCondition();
         public IMovingBlock RidingBlock { get; set; }
     }

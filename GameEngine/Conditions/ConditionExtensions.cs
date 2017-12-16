@@ -16,6 +16,15 @@ namespace GameEngine
             else
                 return new OrCondition(condition, other);
         }
+
+        public static ICondition And(this ICondition condition, ICondition other)
+        {
+            if (condition == null)
+                return other;
+            else
+                return new AndCondition(condition, other);
+        }
+
         public static Condition Negate(this ICondition condition)
         {
             return new NegativeCondition(condition);

@@ -19,8 +19,7 @@ namespace QuickGame1
         public Layer WaterLayer { get { return Layers[2]; } }
         public Layer SolidLayer { get { return Layers[3]; } }
         public Layer InterfaceLayer {  get { return Layers[4]; } }
-
-       
+        
         private QuickGameTileMap _tileMap;
         public QuickGameTileMap TileMap
         {
@@ -32,7 +31,9 @@ namespace QuickGame1
 
         public Vector2 PlayerStart { get; set; }
         public King Player { get; private set; }
-        
+
+        public PathPoint[] SinglePathPoints;
+
         public QuickGameScene(SceneID id, MapTemplate masterTemplate) :base(id)
         {
             MasterTemplate = masterTemplate;
@@ -101,7 +102,7 @@ namespace QuickGame1
 
         protected override IEnumerable<SceneTransition> LoadTransitions()
         {
-            yield return new QuickGameBoundaryTransition(Player, this);
+            yield return new QuickGameBoundaryTransition(this);
         }
     }
 }

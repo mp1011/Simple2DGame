@@ -13,12 +13,7 @@ namespace QuickGame1
 
         public static void AddWaterPhysics(IPlatformerObject actor)
         {
-            var waterMotionMultiplier = new MotionMultiplier(actor.IsUnderWater, "underwater");
-
-            foreach(var force in actor.Motion.Forces.OfType<AxisMotion>())
-            {
-                force.Multiplier = waterMotionMultiplier;
-            }
+            actor.Motion.AddMultiplier(new MotionMultiplier(actor.IsUnderWater, "underwater"));  
         }
 
         public static void AddWaterOverlays(Layer waterLayer, Layer solidLayer)

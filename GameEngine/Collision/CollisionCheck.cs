@@ -37,7 +37,7 @@ namespace GameEngine
 
         protected bool CheckForCollisions(TFirst Object, TSecond collidable, bool collidedAlready)
         {
-            var originalInfo = new CollisionInfo { OriginalPosition = Object.Position.Copy(), OriginalVelocity = Object.Motion.MotionPerSecond };
+            var originalInfo = new CollisionInfo { OriginalPosition = Object.Position.Copy(), OriginalVelocity = Object.Motion.CurrentMotionPerSecond };
 
             if (Object.IsRemoved || collidable.IsRemoved)
                 return false;

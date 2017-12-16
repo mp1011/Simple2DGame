@@ -27,7 +27,7 @@ namespace QuickGame1
             QuickGameScene ret = loadedScenes.TryGet(map.ToString());
             if (ret != null)
             {
-                SetPlayerStart(ret);
+                SetIntersceneActorPositions(ret);
                 LastScene = ret;
                 QuickGameScene.Current = ret;
                 return ret;
@@ -43,7 +43,7 @@ namespace QuickGame1
 
             ret = new QuickGameScene(map, MasterTemplate);
 
-            SetPlayerStart(ret);
+            SetIntersceneActorPositions(ret);
 
             DebugText.NewTextPosition = new Vector2(50, 50);
             LastScene = ret;
@@ -54,23 +54,33 @@ namespace QuickGame1
             return ret;
         }
 
-        private void SetPlayerStart(QuickGameScene newScene)
+        private void SetIntersceneActorPositions(QuickGameScene newScene)
         {
             if (LastScene != null)
             {
-                newScene.Player.Position.Center = CalculatePlayerStart(LastScene.Player, newScene);
-                newScene.Player.Position.KeepWithin(newScene.Position, 16);
-          //      newScene.Player.PutOnGround(newScene.TileMap,32);
-                newScene.AdjustCamera();
-                newScene.Player.Motion.Stop(Axis.X);
-                newScene.Player.Motion.Stop(Axis.Y);
+                var isa = LastScene.InterSceneActors.Where(p => p.NextScene != null && p.NextScene.Equals(newScene.ID)).ToArray();
+                foreach (var actorInLastScene in isa)
+                {
+                    var actorInNewScene = newScene.InterSceneActors.SingleOrDefault(p => p.GetType().Name == actorInLastScene.GetType().Name);
+                    if(actorInNewScene == null)
+                    {
+                        actorInNewScene = (IMovesBetweenScenes)Activator.CreateInstance(actorInLastScene.GetType());
+                    }
 
+                    actorInNewScene.Position.Center = CalculateActorStart(actorInLastScene, LastScene.ID, newScene);
+                    actorInNewScene.Position.KeepWithin(newScene.Position, 16);
+                    actorInNewScene.Motion.Stop(Axis.X);
+                    actorInNewScene.Motion.Stop(Axis.Y);
+                    actorInNewScene.NextScene = null;
+                }
+
+                newScene.AdjustCamera();
             }
         }
 
-        private Vector2 CalculatePlayerStart(King playerInLastScene, Scene nextScene)
+        private Vector2 CalculateActorStart(IMovesBetweenScenes actorInLastScene, SceneID lastScene, Scene nextScene)
         {
-            var templatePosition = MasterTemplate.PositionInMapToPointInTemplate(playerInLastScene.Scene.ID, playerInLastScene.Position.Center);
+            var templatePosition = MasterTemplate.PositionInMapToPointInTemplate(lastScene, actorInLastScene.Position.Center);
 
             var nextMapPosition = MasterTemplate.PointInTemplateToPositionInMap(nextScene.ID, templatePosition);
 

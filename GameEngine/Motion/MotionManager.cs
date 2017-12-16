@@ -1,65 +1,92 @@
-﻿using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace GameEngine
 {
+    /// <summary>
+    /// Moves an object every frame
+    /// </summary>
     public class MotionManager : IUpdateable
     {
-        public Vector2 MotionPerSecond { get; private set; }
-        public Vector2 LastNonZeroMotion { get; private set; }
-        public Vector2 FrameVelocity { get; private set; }
-        public Rectangle FrameStartPosition { get; private set; }  
-        public IMovingWorldObject ObjectToMove { get; private set; }
+        public Rectangle FrameStartPosition { get; private set; } = new Rectangle();
 
+        private IMovingWorldObject ObjectToMove;
         UpdatePriority IUpdateable.Priority => UpdatePriority.Motion;
         IRemoveable IUpdateable.Root => ObjectToMove;
 
-        List<IMotionAdjuster> _forces = new List<IMotionAdjuster>();
-        public List<IMotionAdjuster> Forces { get { return _forces; } }
+        private InterpolatedVector MotionVector { get; } = new InterpolatedVector();
+        
+        public Vector2 FrameVelocity { get; private set; } = Vector2.Zero;
+
+        public Vector2 TargetMotionPerSecond => MotionVector.Target;
+        public Vector2 CurrentMotionPerSecond => MotionVector.Current;
+
+        private List<MotionAdjuster> MotionAdjusters = new List<MotionAdjuster>();
+
+        private List<MotionMultiplier> MotionMultipliers = new List<MotionMultiplier>();
+
+        public void AddMultiplier(MotionMultiplier m)
+        {
+            MotionMultipliers.Add(m);
+        }
+
+        public void AdjustImmediately(Action<InterpolatedVector> action)
+        {
+            action(MotionVector);
+        }
+
+        public void AdjustImmediately(MotionAdjuster adjuster)
+        {
+            adjuster.Update(ObjectToMove, MotionVector);
+        }
 
         public MotionManager(IMovingWorldObject objectToMove)
         {
             ObjectToMove = objectToMove;
-            objectToMove.Layer.Scene.AddObject(this);
-            FrameStartPosition = new Rectangle();
+            ObjectToMove.Layer.Scene.AddObject(this);
         }
 
-        public T GetMotionByName<T>(string name) where T:IMotionAdjuster
+        public void Stop(Axis axis, bool setTarget=false)
         {
-            return Forces.OfType<T>().FirstOrDefault(p => p.Name == name);
+            MotionVector.GetAxis(axis).Current = 0;
+            if(setTarget)
+            {
+                MotionVector.GetAxis(axis).SetTarget(0, 0);
+            }
+        }
+
+        public void AddAdjuster(MotionAdjuster adjuster)
+        {
+            MotionAdjusters.Add(adjuster);
         }
         
         void IUpdateable.Update(TimeSpan elapsedInFrame)
         {
-            FrameStartPosition.Set(ObjectToMove.Position);
+            FrameStartPosition = ObjectToMove.Position.Copy();
 
-            foreach (var force in Forces)
+            foreach (var adjuster in MotionAdjusters)
+                adjuster.Update(ObjectToMove,MotionVector);
+
+       
+            foreach(var multiplier in MotionMultipliers)
             {
-                if(force.Active)
-                    MotionPerSecond = force.AdjustMotionPerSecond(elapsedInFrame, MotionPerSecond);
+                MotionVector.X.TargetScale = multiplier.GetTargetMod();
+                MotionVector.X.DeltaScale = multiplier.GetDeltaMod();
+                MotionVector.Y.TargetScale = multiplier.GetTargetMod();
+                MotionVector.Y.DeltaScale = multiplier.GetDeltaMod();
             }
 
-            FrameVelocity = CalcFrameVelocity(elapsedInFrame);
+            MotionVector.Adjust(elapsedInFrame);
 
-            ObjectToMove.Position.Center = ObjectToMove.Position.Center.Translate(FrameVelocity);
+            
+            var motion = CurrentMotionPerSecond;
 
-            if (MotionPerSecond.X != 0 || MotionPerSecond.Y != 0)
-                LastNonZeroMotion = MotionPerSecond;            
-        }
-
-        private Vector2 CalcFrameVelocity(TimeSpan elapsedInFrame)
-        {
-            var frameMotion = MotionPerSecond.Scale(elapsedInFrame.TotalSeconds);
-            return frameMotion;
-        }
-
-        public void Stop(Axis a)
-        {
-            MotionPerSecond = MotionPerSecond.SetAxis(a, 0);
+            FrameVelocity = CurrentMotionPerSecond.Scale(elapsedInFrame.TotalSeconds);
+            ObjectToMove.Position.Translate(FrameVelocity);
         }
 
         /// <summary>

@@ -9,6 +9,9 @@ namespace QuickGame1
 {
     class SmallHeart : MovingActor, IPrize, IBounces
     {
+
+        public ManualCondition GravityOn { get; } = new ManualCondition(true);
+
         public SmallHeart() : base(QuickGameScene.Current, Textures.SmallHeartTexture)
         {
             Position.SetWidth(8, GameEngine.AnchorOrigin.Left);
@@ -18,9 +21,9 @@ namespace QuickGame1
 
             this.AddGravity();
 
-
-            var yMotion = new AxisMotion("prize move", this).Set(deactivateAfterStart: true);                 
-            yMotion.Active = true;
+            throw new NotImplementedException();
+            //var yMotion = new AxisMotion("prize move", this).Set(deactivateAfterStart: true);                 
+            //yMotion.Active = true;
         }
 
         SoundEffect IPrize.CollectSound => Sounds.PlayerHit;
