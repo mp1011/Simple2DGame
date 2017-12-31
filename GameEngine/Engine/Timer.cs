@@ -9,6 +9,8 @@ namespace GameEngine
 
     public class Timer : Condition, IUpdateable
     {
+        #region Timer Logic
+
         UpdatePriority IUpdateable.Priority => UpdatePriority.BeginUpdate;
 
         private IRemoveable Owner;
@@ -20,13 +22,18 @@ namespace GameEngine
         public Timer(TimeSpan timePerState, IWorldObject owner) : this ( new ConstValue<TimeSpan>(timePerState), owner)
         {}
 
-        public Timer(ConfigValue<TimeSpan> timePerState, IWorldObject owner)
+        public Timer(ConfigValue<TimeSpan> timePerState, IWorldObject owner) : this(owner)
         {
             TimePerState = timePerState;
             msRemaining = TimePerState.Value.TotalMilliseconds;
-            Owner = owner;
-            owner.Layer.Scene.AddObject(this);           
         }
+
+        public Timer(IWorldObject owner)
+        {
+            Owner = owner;
+            owner.Layer.Scene.AddObject(this);
+        }
+
 
         public void Reset()
         {
@@ -53,7 +60,17 @@ namespace GameEngine
 
         public bool IsRunning { get { return IsActive; } }
 
-      
+        #endregion
+
+        #region Timer Conditions
+
+        public Condition OnceEvery(TimeSpan span)
+        {
+            TimePerState = new ConstValue<TimeSpan>(span);
+            return new OnceEvery(this);
+        }
+
+        #endregion
     }
 
     public class CyclingTimer<T> : CyclingList<T>

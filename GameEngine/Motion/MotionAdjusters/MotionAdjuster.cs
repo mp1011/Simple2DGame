@@ -18,11 +18,23 @@ namespace GameEngine
             Condition = condition;
         }
 
+        private bool wasActive = false;
+
         public void Update(IMoveable movingObject, InterpolatedVector motion)
         {
             if (Condition.IsActiveAndNotNull())
+            {
+                if (!wasActive)
+                    OnActivated();
+
+                wasActive = true;
                 AdjustMotion(movingObject, motion);
+            }
+            else
+                wasActive = false;
         }
+
+        protected virtual void OnActivated() { }
 
         protected abstract void AdjustMotion(IMoveable movingObject, InterpolatedVector motion);
 

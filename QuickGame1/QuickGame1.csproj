@@ -74,8 +74,10 @@
     <Compile Include="Behavior\Bounce.cs" />
     <Compile Include="Behavior\Damage.cs" />
     <Compile Include="Behavior\ElfController.cs" />
+    <Compile Include="Behavior\EnemyHitbox.cs" />
     <Compile Include="Behavior\MovingPlatformPositionAdjuster.cs" />
     <Compile Include="Behavior\NearbyTileChecker.cs" />
+    <Compile Include="Behavior\ObstacleReaction.cs" />
     <Compile Include="Behavior\Pause.cs" />
     <Compile Include="Behavior\QuickGameCollisionManager.cs" />
     <Compile Include="Behavior\DestroyOnAnimationFinished.cs" />
@@ -84,6 +86,7 @@
     <Compile Include="Behavior\Prize.cs" />
     <Compile Include="Behavior\Recoil.cs" />
     <Compile Include="Behavior\Spring.cs" />
+    <Compile Include="Resource\Config.cs" />
     <Compile Include="Resource\Maps.cs" />
     <Compile Include="Scene\BoundaryTransition.cs" />
     <Compile Include="Scene\BreakableTile.cs" />
@@ -126,6 +129,8 @@
     <Compile Include="Sprites\Enemy.cs" />
     <Compile Include="Sprites\EnemyBullet.cs" />
     <Compile Include="Sprites\Grapeman.cs" />
+    <Compile Include="Sprites\Rogue.cs" />
+    <Compile Include="Sprites\MrSkeltal.cs" />
     <Compile Include="Sprites\Shrapnel.cs" />
     <Compile Include="Sprites\Sign.cs" />
     <Compile Include="Sprites\Slime.cs" />

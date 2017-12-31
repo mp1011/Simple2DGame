@@ -28,6 +28,40 @@ namespace GameEngine
         {
             return TileMap.GetTileFromGridPoint(TileIndex.GetAdjacent(side));
         }
+
+        public Tile GetFirstAdjacent(Direction side, Predicate<Tile> condition)
+        {
+            var possible = GetAdjacentWhile(side, t => !condition(t)).Last().GetAdjacent(side);
+            if (condition(possible))
+                return possible;
+            else
+                return null;
+        }
+
+        public IEnumerable<Tile> GetAdjacentWhile(Direction side, Predicate<Tile> condition)
+        {
+            return GetAdjacentWhile((BorderSide)side, condition);
+        }
+
+        public IEnumerable<Tile> GetAdjacentWhile(BorderSide side, Predicate<Tile> condition)
+        {
+            var tile = this;
+            yield return this;
+
+            while(side != BorderSide.None)
+            {
+                var adjacent = tile.GetAdjacent(side);
+                if (!adjacent.Position.CollidesWith(tile.TileMap.Position,false))
+                    break;
+
+                if (condition(adjacent))
+                    yield return adjacent;
+                else
+                    break;
+
+                tile = adjacent;
+            }
+        }
     }
 
     public class TileMap<TSpecialTileInfo> : TileMap where TSpecialTileInfo : Tile, new()

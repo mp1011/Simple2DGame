@@ -12,11 +12,11 @@ namespace QuickGame1
     {
         private TActor Actor;
 
-        private ICondition IsAttacking;
-        private ICondition HasLanded;
-        private ICondition IsOnLadder;
+        private Condition IsAttacking;
+        private Condition HasLanded;
+        private Condition IsOnLadder;
 
-        public AnimationController(TActor actor, ICondition isAttacking, ICondition hasLanded)
+        public AnimationController(TActor actor, Condition isAttacking, Condition hasLanded)
         {
             Actor = actor;
             actor.Scene.AddObject(this);
@@ -36,13 +36,13 @@ namespace QuickGame1
 
         void IUpdateable.Update(TimeSpan elapsedInFrame)
         {
-            if(IsAttacking.IsActiveAndNotNull())
+            if(IsAttacking)
             {
                 Actor.Animations.CurrentKey = AnimationKeys.Attack;
                 return;
             }
 
-            if(IsOnLadder.IsActiveAndNotNull())
+            if(IsOnLadder)
             {
                 if (Actor.Motion.CurrentMotionPerSecond.Y == 0)
                     Actor.Animations.CurrentKey = AnimationKeys.ClimbStop;
@@ -52,13 +52,13 @@ namespace QuickGame1
                 return;
             }
 
-            if(HasLanded.IsActiveAndNotNull())
+            if(HasLanded)
             {
                 Actor.Animations.CurrentKey = AnimationKeys.Land;
                 return;
             }
 
-            if(Actor.IsOnGround.Active)
+            if(Actor.IsOnGround)
             {
                 if (Actor.Motion.CurrentMotionPerSecond.X == 0)
                     Actor.Animations.CurrentKey = AnimationKeys.Stand;

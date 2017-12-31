@@ -10,7 +10,103 @@ namespace QuickGame1
 {
     static class Textures
     {
+        private static TextureInfo rogueTexture;
+        public static TextureInfo RogueTexture
+        {
+            get
+            {
+                return rogueTexture ?? (rogueTexture = new TextureInfo
+                {
+                    ID = "rogue like idle",
+                    CellSize = new Vector2(100, 100),
+                    Origin = new Vector2(0, 0),
+                    Size = new Vector2(300, 100),
+                    AnchorOrigin = AnchorOrigin.Center
+                });
+            }
+        }
 
+        private static TextureInfo rogueRunTexture;
+        public static TextureInfo RogueRunTexture
+        {
+            get
+            {
+                return rogueRunTexture ?? (rogueRunTexture = new TextureInfo
+                {
+                    ID = "rogue like run",
+                    CellSize = new Vector2(100, 100),
+                    Origin = new Vector2(0, 0),
+                    Size = new Vector2(600, 100),
+                    AnchorOrigin = AnchorOrigin.Center
+                });
+            }
+        }
+
+        private static TextureInfo rogueAttackTexture;
+        public static TextureInfo RogueAttackTexture
+        {
+            get
+            {
+                return rogueAttackTexture ?? (rogueAttackTexture = new TextureInfo
+                {
+                    ID = "rogue like attack",
+                    CellSize = new Vector2(100, 100),
+                    Origin = new Vector2(0, 0),
+                    Size = new Vector2(1000, 100),
+                    AnchorOrigin = AnchorOrigin.Center
+                });
+            }
+        }
+
+
+        private static TextureInfo skeletonIdleTexture;
+        public static TextureInfo SkeletonIdleTexture
+        {
+            get
+            {
+                return skeletonIdleTexture ?? (skeletonIdleTexture = new TextureInfo
+                {
+                    ID = "skeleton",
+                    CellSize = new Vector2(24, 32),
+                    Origin = new Vector2(0, 101),
+                    Size = new Vector2(774, 198),
+                    AnchorOrigin = AnchorOrigin.BottomCenter
+                });
+            }
+        }
+
+        private static TextureInfo skeletonWalkTexture;
+        public static TextureInfo SkeletonWalkTexture
+        {
+            get
+            {
+                return skeletonWalkTexture ?? (skeletonWalkTexture = new TextureInfo
+                {
+                    ID = "skeleton",
+                    CellSize = new Vector2(22, 32),
+                    Origin = new Vector2(0, 166),
+                    Size = new Vector2(774, 198),
+                    AnchorOrigin = AnchorOrigin.BottomCenter
+                });
+            }
+        }
+
+        private static TextureInfo skeletonAttackTexture;
+        public static TextureInfo SkeletonAttackTexture
+        {
+            get
+            {
+                return skeletonAttackTexture ?? (skeletonAttackTexture = new TextureInfo
+                {
+                    ID = "skeleton",
+                    CellSize = new Vector2(43, 37),
+                    Origin = new Vector2(0, 0),
+                    Size = new Vector2(774, 198),
+                    AnchorOrigin = AnchorOrigin.BottomCenter,
+                    CellAnchorOffset = new Vector2(8,0)
+                });
+            }
+        }
 
         private static TextureInfo cursorTexture;
         public static TextureInfo CursorTexture
@@ -84,7 +180,7 @@ namespace QuickGame1
                     ID = "bullets",
                     CellSize = new Vector2(18, 18),
                     Size = new Vector2(520, 361),
-                    Origin = new Vector2(136, 6),
+                    Origin = new Vector2(136, 6+18),
                     AnchorOrigin = AnchorOrigin.Center
                 });
             }

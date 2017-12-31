@@ -28,10 +28,16 @@ namespace GameEngine
         private int[] Frames;
         private CyclingInteger CurrentFrameIndex;
         private TimeSpan TimeRemainingInFrame;
-              
+       
         public IRemoveable Root { get; private set; }
 
         public bool Finished {  get { return CurrentFrameIndex.JustCycled; } }
+         
+        public TextureInfo Texture
+        {
+            get { return Sprite.Texture; }
+            set { Sprite = Sprite.ChangeTexture(value); }
+        }
 
         public void Reset()
         {
@@ -46,10 +52,10 @@ namespace GameEngine
             Sprite = sprite;
             Frames = frames;
             CurrentFrameIndex = new CyclingInteger(frames.Length);
-            DrawInfo = sprite.DrawInfo;
+            DrawInfo = sprite.DrawInfo;            
         }
 
-        private int CurrentFrame
+        public int CurrentFrame
         {
             get
             {
@@ -195,6 +201,18 @@ namespace GameEngine
             var anim = new DirectedAnimation(gameObject, gameObject, gameObject.Sprite, flipBehavior, frames);
             Add(key.Name, anim);
             return anim;
+        }
+
+        public Animation AddRange<T>(AnimationKey key, T gameObject, TextureFlipBehavior flipBehavior, int from, int to, int holdFrame=-1, int holdFor=2)
+          where T : IRemoveable, IWithPositionAndDirection, IWithSprite
+        {
+            List<int> frames = Enumerable.Range(from, (to - from)).ToList();
+            if(holdFrame > -1)
+            {
+                frames = frames.SelectMany(p => (p == holdFrame) ? Enumerable.Range(0,holdFor).Select(q=>p) : new int[] { p }).ToList();
+            }
+
+            return Add(key, gameObject, flipBehavior, frames.ToArray());
         }
 
         public AnimationSet(IDisplayable sprite) : base(sprite)

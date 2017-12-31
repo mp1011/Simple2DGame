@@ -8,7 +8,7 @@ namespace GameEngine
 {
     public enum AnchorOrigin
     {
-        BottomCenter = 0,
+        BottomCenter,
         Center,
         Left,
         Right,

@@ -8,45 +8,50 @@ namespace GameEngine
 {
     public interface ICondition
     {
-        ulong ActivatedFrame { get; }
+        ulong LastChangedFrame { get; }
         bool IsActive { get; }
     }
+    
 
     public interface ICondition<T> : ICondition
     {
         T Item { get; }
     }
 
-    public class ConstantCondition : ICondition
+    public class ConstantCondition : Condition
     {
-        public ulong ActivatedFrame => 0;
-        public bool IsActive { get; }
-
+        private bool constValue;
         public ConstantCondition(bool value)
         {
-            IsActive = value;
+            constValue = value;
         }
+
+        public override bool IsActive => constValue;
     }
 
     public abstract class Condition : ICondition
     {
-        private ulong activatedFrame = 0;
-        ulong ICondition.ActivatedFrame => activatedFrame;
+        private ulong lastChangedFrame = 0;
+        private ulong lastCheckedFrame = 0;
+
+        ulong ICondition.LastChangedFrame => lastChangedFrame;
 
         private bool wasActive = false;
         bool ICondition.IsActive
         {
             get
             {
-                if (activatedFrame == Engine.Instance.FrameNumber)
-                    return true;
+                if (Engine.Instance.FrameNumber == lastCheckedFrame)
+                    return wasActive;
 
                 var nowActive = IsActive;
 
-                if(nowActive && !wasActive)
-                    activatedFrame = Engine.Instance.FrameNumber;
+                if(nowActive != wasActive)
+                    lastChangedFrame = Engine.Instance.FrameNumber;
 
                 wasActive = nowActive;
+
+                lastCheckedFrame = Engine.Instance.FrameNumber;
                 return nowActive;
             }
         }
@@ -57,6 +62,11 @@ namespace GameEngine
         private static ConstantCondition falseCondition = new ConstantCondition(false);
         public static ConstantCondition True => trueCondition;
         public static ConstantCondition False => falseCondition;
+
+        public static implicit operator bool(Condition c)
+        {
+            return c.IsActiveAndNotNull();
+        }
     }
 
     public class LambdaCondition<T> : Condition, ICondition<T>
@@ -114,7 +124,7 @@ namespace GameEngine
                     isStarted = StartCondition.IsActive;
                  
                 if(isStarted)                
-                    isActive = StartCondition.WasJustActivated() || ContinueCondition.IsActive;
+                    isActive = StartCondition.IsActive || ContinueCondition.IsActive;
                 
                 if (!isActive)
                     isStarted = false;

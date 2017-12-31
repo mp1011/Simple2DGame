@@ -28,7 +28,7 @@ namespace QuickGame1
 
             Animations.Add(AnimationKeys.Stand, this, TextureFlipBehavior.FlipWhenFacingRight, 0,0,2,2,4,4,6,6);
            
-            new EnemyBehavior<Slime>(this, EnemyBehaviorFlags.HasGravity | EnemyBehaviorFlags.Moves | EnemyBehaviorFlags.Shoots);
+            new EnemyBehavior<Slime>(this, EnemyBehaviorFlags.HasGravity | EnemyBehaviorFlags.Moves);
 
             DamageHandler = new EnemyDamageHandler<Slime>(5, this);
 

@@ -59,9 +59,11 @@ namespace GameEngine
             return y * Columns + x;
         }
 
+      
         public AnchorOrigin AnchorOrigin { get; set; }
+      
 
-        public ConfigArray<Vector2> CellAnchorOffsets;
+        public Vector2? CellAnchorOffset;
     }
 
 }

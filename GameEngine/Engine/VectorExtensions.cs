@@ -368,6 +368,24 @@ namespace GameEngine
           
 
         }
-        
+     
+        /// <summary>
+        /// Returns how far the vector would need to translate in the given direction before it would pass the other
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="other"></param>
+        /// <param name="d"></param>
+        /// <returns></returns>
+        public static float GetDistanceInDirection(this Vector2 position, Vector2 other, Direction d)
+        {
+            switch(d)
+            {
+                case Direction.Right: return other.X - position.X;
+                case Direction.Left: return position.X - other.X;
+                case Direction.None: return 0f;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
     }
 }

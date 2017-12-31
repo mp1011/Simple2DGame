@@ -54,6 +54,10 @@ namespace QuickGame1
             WaterHelper.AddWaterPhysics(this);
 
             Scene.InterSceneActors.Add(this);
+
+          //  DebugText.DebugWatch(this, Fonts.SmallFont, Scene.InterfaceLayer, t => t.Position.Center.X.ToString());
+         //   DebugText.DebugWatch(this, Fonts.SmallFont, Scene.InterfaceLayer, t => t.Position.Center.Y.ToString());
+
         }
 
         SceneID IMovesBetweenScenes.NextScene { get; set; }

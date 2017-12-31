@@ -451,6 +451,27 @@ namespace GameEngine
             return this;
         }
 
+        public Vector2 GetAnchorPoint(AnchorOrigin anchor)
+        {
+            switch(anchor)
+            {
+                case AnchorOrigin.BottomCenter: return BottomCenter;
+                case AnchorOrigin.Center: return Center;
+                default: throw new Exception($"Unsupported anchor origin: {anchor}");
+            }
+        }
+
+        public Vector2 GetSidePoint(Direction dir)
+        {
+            switch(dir)
+            {
+                case Direction.Right: return RightCenter;
+                case Direction.Left: return LeftCenter;
+                case Direction.None: return Center;
+                default: throw new NotImplementedException();
+            }
+        }
+
         public Rectangle Copy()
         {
             return new Rectangle(this.Left, this.Top, this.Width, this.Height);

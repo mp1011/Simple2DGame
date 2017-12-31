@@ -26,7 +26,7 @@ namespace GameEngine
             Map = map;
             PathPoints = pathPoints;
 
-            WalkMotion = new AxisMotion(target:Config.ReadValue<AxisMotionConfig>("npc walk"));
+            WalkMotion = new AxisMotion(Config.ReadValue<AxisMotionConfig>("npc walk"));
             obj.Motion.AddAdjuster(WalkMotion);
             
             var JumpTrigger = new XYMotion(Config.ReadValue<XYMotionConfig>("npc jump"));

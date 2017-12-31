@@ -9,7 +9,7 @@ namespace GameEngine
     public static class IConditionExtensions
     {
 
-        public static ICondition Or(this ICondition condition, ICondition other)
+        public static Condition Or(this ICondition condition, Condition other)
         {
             if (condition == null)
                 return other;
@@ -17,7 +17,7 @@ namespace GameEngine
                 return new OrCondition(condition, other);
         }
 
-        public static ICondition And(this ICondition condition, ICondition other)
+        public static Condition And(this ICondition condition, Condition other)
         {
             if (condition == null)
                 return other;
@@ -35,37 +35,42 @@ namespace GameEngine
             return condition != null && condition.IsActive;
         }
 
-        public static bool WasJustActivated(this ICondition condition)
+        public static bool JustStarted(this ICondition condition)
         {
-            return condition.IsActive && condition.ActivatedFrame == Engine.Instance.FrameNumber;
+            return condition.IsActive && condition.LastChangedFrame == Engine.Instance.FrameNumber;
         }
 
-        public static ICondition SetActiveTime(this ICondition condition, ConfigValue<TimeSpan> time, IWorldObject owner)
+        public static bool JustEnded(this ICondition condition)
+        {
+            return !condition.IsActive && condition.LastChangedFrame == Engine.Instance.FrameNumber;
+        }
+
+        public static Condition SetActiveTime(this ICondition condition, ConfigValue<TimeSpan> time, IWorldObject owner)
         {
             return new Sustain(new Timer(time, owner), condition);
         }
 
-        public static ICondition ContinueWhile(this ICondition condition, ICondition whileCondition)
+        public static Condition ContinueWhile(this ICondition condition, ICondition whileCondition)
         {
             return new ContinueWhileCondition(condition, whileCondition);
         }
 
-        public static ICondition When(this ICondition condition, ICondition secondCondition)
+        public static Condition When(this ICondition condition, ICondition secondCondition)
         {
             return new AndCondition(condition, secondCondition);
         }
 
-        public static ICondition When<T>(this ICondition<T> condition, T item, Predicate<T> predicate)
+        public static Condition When<T>(this ICondition<T> condition, T item, Predicate<T> predicate)
         {
             return new AndCondition(condition, new LambdaCondition<T>(item, predicate));
         }
 
-        public static ICondition IsVisible(this IDisplayable d)
+        public static Condition IsVisible(this IDisplayable d)
         {
             return new LambdaCondition<IDisplayable>(d, x => x.DrawInfo.Visible);
         }
 
-        public static ICondition WaitUntil(this ICondition c, Timer t)
+        public static Condition WaitUntil(this ICondition c, Timer t)
         {
             return new WaitUntil(t, c);
         }       

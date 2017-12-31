@@ -10,7 +10,7 @@ namespace GameEngine
 {
     public class StayRelativeTo : IUpdateable
     {
-        private IWithPosition Parent;
+        private IWithPositionAndDirection Parent;
         private IWithPosition Object;
         private Vector2 Offset;
 
@@ -19,7 +19,7 @@ namespace GameEngine
         IRemoveable IUpdateable.Root => Root;
         private IRemoveable Root;
 
-        public StayRelativeTo(IWithPosition objectToMove, IWithPosition origin, Vector2 offset, IWorldObject root)
+        public StayRelativeTo(IWithPosition objectToMove, IWithPositionAndDirection origin, Vector2 offset, IWorldObject root)
         {
             Parent = origin;
             Offset = offset;
@@ -30,7 +30,7 @@ namespace GameEngine
 
         void GameEngine.IUpdateable.Update(TimeSpan elapsedInFrame)
         {
-            Object.Position.Center = Parent.Position.Center;
+            Object.Position.Center = Parent.Position.Center.Translate(Offset.FlipIfLeft(Parent.Direction));
         }
     }
 
@@ -67,7 +67,7 @@ namespace GameEngine
             new StayRelativeTo<TParent>(item, parent, new Vector2(xOff, yOff));
         }
 
-        public static void StayRelativeTo(this IWithPosition item, IWithPosition parent, float xOff, float yOff, IWorldObject root)
+        public static void StayRelativeTo(this IWithPosition item, IWithPositionAndDirection parent, float xOff, float yOff, IWorldObject root)
         {
             new StayRelativeTo(item, parent, new Vector2(xOff, yOff), root);
         }

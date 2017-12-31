@@ -9,13 +9,9 @@ namespace GameEngine
     public class GroundMotion<T> : AxisMotion
         where T : IMoveable, IPlatformerObject
     {
-        private IPlatformerObject PlatformerObject;
-
-        public GroundMotion(string name, T objectToMove) : base(name, objectToMove)
+        public GroundMotion(T movingObject, AxisMotionConfig Config)
+            : base(Config, movingObject.IsOnGround)
         {
-            PlatformerObject = objectToMove;
         }
-
-        public override bool Active { get => PlatformerObject.IsOnGround.Active && base.Active; set => base.Active = value; }
     }
 }

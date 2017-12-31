@@ -52,6 +52,11 @@ namespace GameEngine
             obj.Position.Center = parent.Position.Center.Translate(offset.FlipIfLeft(parent.Direction));
             obj.Direction = parent.Direction;
         }
+
+        public static Rectangle GetEnclosingArea(this IWithPosition first, IWithPosition second)
+        {
+            return first.Position.Copy().ExpandToContain(second.Position);
+        }
     }
 
    

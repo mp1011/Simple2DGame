@@ -76,7 +76,7 @@ namespace GameEngine
             if (displayable == null || texture == null || !drawInfo.Visible)
                 return;
 
-             Texture2D xnaTec = GetTexture(texture.ID);
+            Texture2D xnaTec = GetTexture(texture.ID);
 
             XNAColor color = XNAColor.White;
 
@@ -88,7 +88,7 @@ namespace GameEngine
 
             Rectangle dest1 = new Rectangle(topLeft.X, topLeft.Y, displayable.Position.Width, displayable.Position.Height);
             Rectangle dest2 = new Rectangle(0,0, src.Width, src.Height);
-
+            
             switch(texture.AnchorOrigin)
             {
                 case AnchorOrigin.BottomCenter:
@@ -101,8 +101,8 @@ namespace GameEngine
                    throw new NotImplementedException();
             }
 
-            if (texture.CellAnchorOffsets != null)
-                dest2.Translate(texture.CellAnchorOffsets.GetValues()[cell].Flip(drawInfo.FlipX, drawInfo.FlipY));
+            if (texture.CellAnchorOffset != null)
+                dest2.Translate(texture.CellAnchorOffset.Value.Flip(drawInfo.FlipX, drawInfo.FlipY));
 
             var dest3 = new XNARec((int)dest2.Left, (int)dest2.Top, (int)dest2.Width, (int)dest2.Height);
 

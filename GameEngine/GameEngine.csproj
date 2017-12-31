@@ -50,7 +50,9 @@
     <Compile Include="Collision\CollisionInfo.cs" />
     <Compile Include="Collision\CollisionManager.cs" />
     <Compile Include="Collision\CollisionResponder.cs" />
+    <Compile Include="Collision\Hitbox.cs" />
     <Compile Include="Conditions\ConditionExtensions.cs" />
+    <Compile Include="Conditions\ProximityCondition.cs" />
     <Compile Include="Config\ConfigChecker.cs" />
     <Compile Include="Config\ConfigProvider.cs" />
     <Compile Include="Config\Configuration.cs" />
@@ -90,6 +92,7 @@
     <Compile Include="Interfaces\IWorldObject.cs" />
     <Compile Include="Interfaces\MotionInterfaces.cs" />
     <Compile Include="Interfaces\PositionInterfaces.cs" />
+    <Compile Include="Motion\GroundMotion.cs" />
     <Compile Include="Motion\InterpolatedVector.cs" />
     <Compile Include="Motion\MotionAdjusters\MotionWithBrake.cs" />
     <Compile Include="Motion\MotionAdjusters\XYMotion.cs" />
@@ -101,6 +104,9 @@
     <Compile Include="Motion\IMoveable.cs" />
     <Compile Include="Motion\MotionMultiplier.cs" />
     <Compile Include="Motion\PathMover.cs" />
+    <Compile Include="Obstacle\Ledge.cs" />
+    <Compile Include="Obstacle\Obstacle.cs" />
+    <Compile Include="Obstacle\Wall.cs" />
     <Compile Include="SceneTransition\BoundaryTransition.cs" />
     <Compile Include="SceneTransition\ConditionTransition.cs" />
     <Compile Include="SceneTransition\Exit.cs" />
@@ -108,7 +114,7 @@
     <Compile Include="SceneTransition\SceneLoader.cs" />
     <Compile Include="StandardBehaviors\DestroyWhenOutOfBounds.cs" />
     <Compile Include="StandardBehaviors\MovesBetweenScenes.cs" />
-    <Compile Include="StandardBehaviors\NearbyTileChecker.cs" />
+    <Compile Include="Obstacle\NearbyTileChecker.cs" />
     <Compile Include="StandardBehaviors\PathMoverBehavior.cs" />
     <Compile Include="StandardBehaviors\PlatformerPathFollowerBehavior.cs" />
     <Compile Include="StandardBehaviors\PositionRelativeTo.cs" />

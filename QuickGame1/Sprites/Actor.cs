@@ -33,7 +33,11 @@ namespace QuickGame1
         public Rectangle Position { get; private set; }
         public Layer Layer { get; private set; }
         public Vector2 LastNonZeroMotion { get; private set; }
-        public Direction Direction { get; set; }
+        public Direction Direction
+        {
+            get;
+            set;
+        }
 
         public IRemoveable Root => this;
 

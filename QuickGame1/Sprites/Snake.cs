@@ -26,7 +26,11 @@ namespace QuickGame1
 
             Animations.Add(AnimationKeys.Walk, this, TextureFlipBehavior.FlipWhenFacingLeft, 0, 1, 2, 3);
 
-            new EnemyBehavior<Snake>(this, EnemyBehaviorFlags.MovesMore | EnemyBehaviorFlags.HasGravity);
+            var behavior = new EnemyBehavior<Snake>(this, EnemyBehaviorFlags.MovesMore | EnemyBehaviorFlags.HasGravity);
+            behavior.Reactions.WalkingOffLedge = ObstacleReaction.TurnAround;
+
+            behavior.Initialize();
+
 
             DamageHandler = new EnemyDamageHandler<Snake>(2, this);
 

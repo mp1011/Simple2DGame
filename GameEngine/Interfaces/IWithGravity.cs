@@ -16,7 +16,7 @@ namespace GameEngine
         public static void AddGravity(this IWithGravity actor, string configKey = "gravity")
         {
             var gravity = Config.ReadValue<AxisMotionConfig>(configKey);
-            actor.Motion.AddAdjuster(new AxisMotion(start: null, target: gravity, condition: actor.GravityOn));
+            actor.Motion.AddAdjuster(new AxisMotion(gravity, actor.GravityOn));
         }
     }
 }

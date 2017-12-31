@@ -18,11 +18,16 @@ namespace GameEngine
         public TextureInfo Texture { get; private set; }
         public int Cell { get; set; }
         
+        public Sprite ChangeTexture(TextureInfo texture)
+        {
+            return new Sprite(texture) { Cell = Cell, DrawInfo = DrawInfo };
+        }
+
         public Sprite(TextureInfo texture)
         {
             Texture = texture;
             DrawInfo = new TextureDrawInfo();
-
         }
+
     }
 }

@@ -53,7 +53,13 @@ namespace GameEngine
         public void Stop(Axis axis, bool setTarget=false)
         {
             MotionVector.GetAxis(axis).Current = 0;
-            if(setTarget)
+
+            if (axis == Axis.X)
+                ObjectToMove.Position.SetLeft(FrameStartPosition.Left);
+            else if (axis == Axis.Y)
+                ObjectToMove.Position.SetTop(FrameStartPosition.Top);
+
+            if (setTarget)
             {
                 MotionVector.GetAxis(axis).SetTarget(0, 0);
             }

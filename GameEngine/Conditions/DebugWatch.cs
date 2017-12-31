@@ -21,7 +21,7 @@ namespace GameEngine
             {
                 var ret = baseCondition.IsActive;
 
-                if (baseCondition.WasJustActivated())
+                if (baseCondition.JustStarted())
                     GlobalDebugHelper.NoOp();
                 if(ret)
                     GlobalDebugHelper.NoOp();

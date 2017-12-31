@@ -40,7 +40,7 @@ namespace GameEngine
             {
                 MovingObject.Position.Center = targetPoint;
                 TargetNode++;
-                throw new NotImplementedException();
+                //throw new NotImplementedException();
                // Motion.DistancePerSecond = 0;
             }
             else

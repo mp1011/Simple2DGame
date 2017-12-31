@@ -56,13 +56,21 @@ namespace GameEngine
         /// </summary>
         /// <param name="dir"></param>
         /// <param name="motionPerSecond"></param>
-        public static void PushInDirection(this IMoveable objectToMove, Direction dir, float motionPerSecond)
+        public static void PushInDirection(this IMoveable objectToMove, Direction dir, float motionPerSecond, bool additive=false)
         {
             var xy = dir.ToXY() * motionPerSecond;
             objectToMove.Motion.AdjustImmediately(m =>
             {
-                m.X.Current = xy.X;
-                m.Y.Current = xy.Y;
+                if (additive)
+                {
+                    m.X.Current += xy.X;
+                    m.Y.Current += xy.Y;
+                }
+                else
+                {
+                    m.X.Current = xy.X;
+                    m.Y.Current = xy.Y;
+                }
             });
         }
 

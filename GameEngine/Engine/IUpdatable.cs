@@ -29,7 +29,7 @@ namespace GameEngine
     {
         public ICondition Paused { get; private set; }
 
-        public void AddPauseCondition(ICondition condition)
+        public void AddPauseCondition(Condition condition)
         {
             Paused = Paused.Or(condition);
         }

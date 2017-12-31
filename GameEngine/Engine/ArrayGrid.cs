@@ -55,7 +55,7 @@ namespace GameEngine
     }
 
    
-    public class ArrayGrid<T> :IEnumerable<T>
+    public class ArrayGrid<T> :IEnumerable<T> 
     {
         private T[] Items;
         public Vector2 Size { get; private set; }
@@ -140,6 +140,15 @@ namespace GameEngine
                 else
                     return OutOfBoundsFixedValue;
             }
+            else
+                return Items[index];
+        }
+
+        public T GetFromPointOrDefault(Vector2 p)
+        {
+            var index = PointToIndex(p, -1);
+            if (index == -1)
+                return default(T);
             else
                 return Items[index];
         }

@@ -20,8 +20,8 @@ namespace QuickGame1
         private MotionWithBrake ClimbMotion;
         private AxisMotion JumpMotion;
         
-        private ICondition hasLandedOnGround;
-        private ICondition isAttacking;
+        private Condition hasLandedOnGround;
+        private Condition isAttacking;
         private float highestPointAboveGround = float.MaxValue;
 
         public PlayerControl(King player, IGameInputWithDPad input)
@@ -30,11 +30,11 @@ namespace QuickGame1
             Player = player;
             Player.Scene.AddObject(this);
 
-            var walk = new AxisMotion(target: Config.ReadValue<AxisMotionConfig>("walk"));
-            var brake = new AxisMotion(target: Config.ReadValue<AxisMotionConfig>("brake"));
+            var walk = new AxisMotion(Config.ReadValue<AxisMotionConfig>("walk"));
+            var brake = new AxisMotion(Config.ReadValue<AxisMotionConfig>("brake"));
 
-            var climb = new AxisMotion(target: Config.ReadValue<AxisMotionConfig>("climb"));
-            var climbBrake = new AxisMotion(target: Config.ReadValue<AxisMotionConfig>("climb brake"));
+            var climb = new AxisMotion(Config.ReadValue<AxisMotionConfig>("climb"));
+            var climbBrake = new AxisMotion(Config.ReadValue<AxisMotionConfig>("climb brake"));
 
             WalkMotion = new MotionWithBrake(walk, brake);
             player.Motion.AddAdjuster(WalkMotion);
@@ -50,7 +50,7 @@ namespace QuickGame1
                 .SetActiveTime(new ConfigValue<TimeSpan>("landing time"), player);
        
             isAttacking = new InputCondition(GameKeys.Attack, Input)
-                .ContinueWhileAnimationPlaying(player.Animations, AnimationKeys.Attack);
+                .ContinueWhile(player.Animations.IsAnimationPlaying(AnimationKeys.Attack));
 
             new AnimationController<King>(Player, isAttacking, hasLandedOnGround);
 
@@ -88,7 +88,7 @@ namespace QuickGame1
                 highestPointAboveGround = (float)Math.Min(highestPointAboveGround, Player.Position.Bottom);
             }
 
-            if (hasLandedOnGround.WasJustActivated())
+            if (hasLandedOnGround.JustStarted())
             {
                 float maxSoundDistance = 64;
                 var distanceFallen = ((float)Player.Position.Bottom - highestPointAboveGround).KeepInsideRange(0, maxSoundDistance);
@@ -100,7 +100,7 @@ namespace QuickGame1
                 highestPointAboveGround = Int32.MaxValue;
             }
 
-            if (isAttacking.WasJustActivated())
+            if (isAttacking.JustStarted())
             {
                 AudioEngine.Instance.PlaySound(Sounds.Swish);
                 var attack = new Swoosh();

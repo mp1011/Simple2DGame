@@ -18,12 +18,8 @@ namespace QuickGame1
             Position.SetHeight(8, GameEngine.AnchorOrigin.Top);
             Animations.Add(AnimationKeys.Stand, this, TextureFlipBehavior.FlipWhenFacingLeft, 0);
 
-
             this.AddGravity();
-
-            throw new NotImplementedException();
-            //var yMotion = new AxisMotion("prize move", this).Set(deactivateAfterStart: true);                 
-            //yMotion.Active = true;
+            this.PushInDirection(Direction.Up, Config.ReadValue<float>("prize move"));
         }
 
         SoundEffect IPrize.CollectSound => Sounds.PlayerHit;

@@ -126,7 +126,7 @@ namespace GameEngine
         public static float Approach(this float number, float target, double amount)
         {
             return number.Approach(target, (float)amount);
-        }
+        }        
 
         /// <summary>
         /// Adds or subtracts from the given number towards the target, but will never pass it.

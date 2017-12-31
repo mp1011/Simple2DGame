@@ -36,7 +36,7 @@ namespace GameEngine
         {
             if (!timer.IsRunning)
             {
-                if (baseCondition.WasJustActivated())
+                if (baseCondition.JustStarted())
                 {
                     timer.Reset();
                 }
@@ -90,7 +90,7 @@ namespace GameEngine
             if (!baseCondition.IsActive)
                 return false;
 
-            if (baseCondition.WasJustActivated())
+            if (baseCondition.JustStarted())
                 timer.Reset();
             else if (!timer.IsRunning && baseCondition.IsActive)
             {

@@ -1,1 +1,9 @@
-﻿
+﻿rogue should totally stop before attacking
+face player before attacking
+attack more often
+move slower
+dont bounce so much
+
+no splash sound when transitioning when in water
+
+skeleton behavior

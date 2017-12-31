@@ -43,7 +43,7 @@ namespace QuickGame1
         {
             pauseMenu.Visible = IsPaused.IsActive;
 
-            if (pauseInputCondition.WasJustActivated())
+            if (pauseInputCondition.JustStarted())
             {
                 AudioEngine.Instance.PlaySound(Sounds.GetCoin);
                 IsPaused.Active = !IsPaused.Active;

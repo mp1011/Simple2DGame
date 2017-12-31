@@ -7,17 +7,30 @@ using System.Threading.Tasks;
 
 namespace GameEngine
 {
+    //numbers match with BorderSide
     public enum Direction
     {
         None = 0,
-        Right,
-        Left,
-        Up,
-        Down,
+        Right=4,
+        Left=1,
+        Up=2,
+        Down=8,
     }
 
     public static class DirectionExtensions
     {
+        public static BorderSide ToSide(this Direction d)
+        {
+            switch(d)
+            {
+                case Direction.Left: return BorderSide.Left;
+                case Direction.Right: return BorderSide.Right;
+                case Direction.Up: return BorderSide.Top;
+                case Direction.Down: return BorderSide.Bottom;
+                default: return BorderSide.None;
+            }
+        }
+
         public static int ToFlipMod(this Direction d)
         {
             if (d == Direction.Left)

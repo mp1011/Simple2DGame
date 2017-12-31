@@ -10,21 +10,40 @@ namespace GameEngine
     {
         private AnimationSet Animations;
         private AnimationKey Key;
+        private int FrameMin;
+        private int FrameMax;
 
-        public PlayingAnimationCondition(AnimationSet animations, AnimationKey key)
+        public PlayingAnimationCondition(AnimationSet animations, AnimationKey key) : this(animations, key, 0, 9999) { }
+
+        public PlayingAnimationCondition(AnimationSet animations, AnimationKey key, int frameMin, int frameMax)
         {
             Animations = animations;
             Key = key;
+            FrameMin = frameMin;
+            FrameMax = frameMax;
         }
 
-        public override bool IsActive => Animations.IsPlaying(Key);
+        public override bool IsActive
+        {
+            get
+            {
+                if(Animations.CurrentKey.Equals(Key))
+                {
+                    var current = Animations.CurrentAnimation;
+                    var ret = !current.Finished && current.CurrentFrame >= FrameMin && current.CurrentFrame <= FrameMax;
+                    return ret;
+                }
+
+                return false;
+            }
+        }    
     }
 
     public static class PlayingAnimationExtension
     {
-        public static ICondition ContinueWhileAnimationPlaying(this ICondition condition, AnimationSet animation, AnimationKey key)
+        public static Condition IsAnimationPlaying(this AnimationSet animation, AnimationKey key)
         {
-            return new ContinueWhileCondition(condition, new PlayingAnimationCondition(animation, key));
+            return new PlayingAnimationCondition(animation, key);
         }
     }
 }

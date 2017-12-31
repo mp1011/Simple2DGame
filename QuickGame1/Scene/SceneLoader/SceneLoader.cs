@@ -67,11 +67,13 @@ namespace QuickGame1
                         actorInNewScene = (IMovesBetweenScenes)Activator.CreateInstance(actorInLastScene.GetType());
                     }
 
-                    actorInNewScene.Position.Center = CalculateActorStart(actorInLastScene, LastScene.ID, newScene);
-                    actorInNewScene.Position.KeepWithin(newScene.Position, 16);
                     actorInNewScene.Motion.Stop(Axis.X);
                     actorInNewScene.Motion.Stop(Axis.Y);
                     actorInNewScene.NextScene = null;
+
+                    actorInNewScene.Position.Center = CalculateActorStart(actorInLastScene, LastScene.ID, newScene);
+                    actorInNewScene.Position.KeepWithin(newScene.Position, 16);
+
                 }
 
                 newScene.AdjustCamera();
